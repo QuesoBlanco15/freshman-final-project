@@ -24,11 +24,13 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("John DnD")
 
-        # Test Button
+        # Test Button D20
         self.button = QPushButton("Press to Roll")
         self.button.setFixedSize(100, 50)
-        self.button.clicked.connect(self.dicerolltest)
-        
+        self.button.clicked.connect(self.dicerollD20)
+
+        # Attempt to make multiple buttons labeled d12, d10, d8, and d4 (please) -cole
+         
 
         # Set the central widget of the Window.
         self.setCentralWidget(self.button)
@@ -36,6 +38,7 @@ class MainWindow(QMainWindow):
     def dicerollD20(self):
         roll = str(roll_dice(20))
         self.button.setText(roll)
+
     
     
 
