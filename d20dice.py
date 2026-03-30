@@ -17,4 +17,3 @@ def roll_dice(type):
 # I don't exactly know how advantage rolls work with stats. Cole has to explain or 
 # integrate that himself. - AF
 
-print(roll_dice())
