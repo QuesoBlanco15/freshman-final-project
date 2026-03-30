@@ -33,8 +33,8 @@ class MainWindow(QMainWindow):
         # Set the central widget of the Window.
         self.setCentralWidget(self.button)
     
-    def dicerolltest(self):
-        roll = str(roll_dice())
+    def dicerollD20(self):
+        roll = str(roll_dice(20))
         self.button.setText(roll)
     
     
