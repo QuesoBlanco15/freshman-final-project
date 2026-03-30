@@ -1,8 +1,9 @@
 import sys
 
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget, QLabel
 from PyQt6.QtGui import QColor, QPalette
+from d20dice import roll_dice
 
 
 # Subclass QMainWindow to customize your application's main window
@@ -24,11 +25,19 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("John DnD")
 
         # Test Button
-        button = QPushButton("Hello!")
-        button.setFixedSize(50, 20)
+        self.button = QPushButton("Press to Roll")
+        self.button.setFixedSize(100, 50)
+        self.button.clicked.connect(self.dicerolltest)
+        
 
         # Set the central widget of the Window.
-        self.setCentralWidget(button)
+        self.setCentralWidget(self.button)
+    
+    def dicerolltest(self):
+        roll = str(roll_dice())
+        self.button.setText(roll)
+    
+    
 
 
 app = QApplication(sys.argv)
