@@ -2,7 +2,7 @@ import sys
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QSplitter, QVBoxLayout
-from d20dice import roll_dice
+from diceClass import *
 from views import *
 
 

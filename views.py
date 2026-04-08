@@ -2,7 +2,8 @@
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget
-from d20dice import roll_dice
+from diceClass import *
+
 
 # Sidebar View
     # TO DO
@@ -48,6 +49,7 @@ class DiceView(QFrame):
 
         # Dice State
         self.die_type = 20
+        
 
         self.button = QPushButton("Press to Roll")
         self.button.setFixedSize(100, 50)
@@ -66,7 +68,8 @@ class DiceView(QFrame):
         panel_layout.addWidget(self.dice_select)
 
     def diceroll(self):
-        roll = str(roll_dice(self.die_type))
+        die = Dice(self.die_type)
+        roll = str(die.roll_dice())
         self.button.setText(roll)
 
     def setdice(self, sides: int):

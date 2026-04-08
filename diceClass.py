@@ -42,13 +42,13 @@ class Dice():
     # returned list instead of just the total added up. 
     def roll_dice(self): 
         dice_roll = 0
-        for x in range(self._qty):
+        for x in range(self.qty):
             seed()
             dice_roll += int(random()*self._side + 1)
-        return f"Rolled {self._qty} times added up to {dice_roll} total."
+        return f"{dice_roll}"
     
     def __str__(self): 
-        return f"This rolls a {self._side} sided dice {self._qty} time(s)."
+        return f"This rolls a {self.side} sided dice {self.qty} time(s)."
     
     # The return statements for roll_dice() and __str__() can be changed in the future. 
     # Needs to be able to include stat modifiers in the rolls. Cole can help with that. 
