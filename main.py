@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
 
         # Background
         self.setStyleSheet("""
-                            QWidget {
+                            QMainWindow {
         background: qlineargradient(
             x1: 0, y1: 0, x2: 1, y2: 1,
             stop: 0 #0d0d0d, stop: 1 #1c1c1c

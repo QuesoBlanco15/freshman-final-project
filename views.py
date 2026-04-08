@@ -1,5 +1,6 @@
 
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox
 from d20dice import roll_dice
 
 # Sidebar View
@@ -39,17 +40,33 @@ class DiceView(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+        # Dice State
+        self.die_type = 20
 
         self.button = QPushButton("Press to Roll")
         self.button.setFixedSize(100, 50)
-        self.button.clicked.connect(self.dicerollD20)
-        panel_layout = QVBoxLayout(self)
-        panel_layout.addWidget(QLabel("Details Panel"))
-        panel_layout.addWidget(self.button)
+        self.button.clicked.connect(self.diceroll)
 
-    def dicerollD20(self):
-        roll = str(roll_dice(20))
+        self.dice_select = QComboBox(self)
+        self.dice_select.addItems(["d4", "d8", "d10", "d12", "d20"])
+        self.dice_select.setCurrentText("d20")
+        self.dice_select.currentTextChanged.connect(
+            lambda text: self.setdice(int(text[1:]))
+        )
+        panel_layout = QVBoxLayout(self)
+        panel_layout.addWidget(QLabel("Dice View"))
+        panel_layout.addWidget(self.button)
+        panel_layout.addWidget(self.dice_select)
+
+    def diceroll(self):
+        roll = str(roll_dice(self.die_type))
         self.button.setText(roll)
+
+    def setdice(self, sides: int):
+        self.die_type = sides
+        
 
 # Multiplier View
     # TO DO
@@ -59,6 +76,6 @@ class MultiplierView(QFrame):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
 
-        frame4_layout = QVBoxLayout(self)
-        frame4_layout.addWidget(QLabel("Frame 4"))
-        frame4_layout.addWidget(QTextEdit())
+        multiplier_layout = QVBoxLayout(self)
+        multiplier_layout.addWidget(QLabel("Multiplier View"))
+        multiplier_layout.addWidget(QTextEdit())
