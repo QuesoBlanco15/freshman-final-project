@@ -113,7 +113,16 @@ class DiceWidget(QWidget):
         painter.translate(cx, cy)
         painter.rotate(self.angle)
 
-        sides = self.dice_type // 3
+        if self.dice_type == 20:
+            sides = 6
+        elif self.dice_type == 12:
+            sides = 5
+        elif self.dice_type == 10:
+            sides = 4
+        elif self.dice_type == 8:
+            sides = 3
+        elif self.dice_type == 4:
+            sides = 3
         points = [
             QPointF(
                 r * math.cos(math.radians(i * 360 / sides - 90)),
