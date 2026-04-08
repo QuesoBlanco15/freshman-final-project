@@ -1,6 +1,7 @@
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget
 from d20dice import roll_dice
 
 # Sidebar View
@@ -8,14 +9,17 @@ from d20dice import roll_dice
         # Add Settings
         # Add Characters
         # Add an Add Characters
-class SidebarView(QFrame):
+class SidebarView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
+        settings = QPushButton()
+        settings.setIcon(QIcon("icons/setting-lines.png"))
+        settings.setIconSize(QSize(25, 25))
 
         sidebar_layout = QVBoxLayout(self)
         sidebar_layout.addWidget(QLabel("Sidebar"))
         sidebar_layout.addWidget(QListWidget())
+        sidebar_layout.addWidget(settings)
 
 # Character Sheet View
     # TO DO
@@ -55,6 +59,7 @@ class DiceView(QFrame):
         self.dice_select.currentTextChanged.connect(
             lambda text: self.setdice(int(text[1:]))
         )
+
         panel_layout = QVBoxLayout(self)
         panel_layout.addWidget(QLabel("Dice View"))
         panel_layout.addWidget(self.button)
