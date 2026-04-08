@@ -3,6 +3,7 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget
 from d20dice import roll_dice
+from rollingdice import DiceWidget
 
 # Sidebar View
     # TO DO
@@ -46,31 +47,24 @@ class DiceView(QFrame):
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
         self.setCursor(Qt.CursorShape.OpenHandCursor)
 
-        # Dice State
-        self.die_type = 20
-
-        self.button = QPushButton("Press to Roll")
-        self.button.setFixedSize(100, 50)
-        self.button.clicked.connect(self.diceroll)
+    
+        self.dice = DiceWidget(self)
 
         self.dice_select = QComboBox(self)
         self.dice_select.addItems(["d4", "d8", "d10", "d12", "d20"])
         self.dice_select.setCurrentText("d20")
         self.dice_select.currentTextChanged.connect(
-            lambda text: self.setdice(int(text[1:]))
+            lambda text: self.dice.set_dice(int(text[1:]))
         )
 
         panel_layout = QVBoxLayout(self)
-        panel_layout.addWidget(QLabel("Dice View"))
-        panel_layout.addWidget(self.button)
+        panel_layout.addWidget(self.dice)
         panel_layout.addWidget(self.dice_select)
 
     def diceroll(self):
         roll = str(roll_dice(self.die_type))
         self.button.setText(roll)
 
-    def setdice(self, sides: int):
-        self.die_type = sides
         
 
 # Multiplier View
