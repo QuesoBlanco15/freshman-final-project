@@ -2,7 +2,7 @@
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget
-from d20dice import roll_dice
+from diceClass import *
 from rollingdice import DiceWidget
 
 # Sidebar View

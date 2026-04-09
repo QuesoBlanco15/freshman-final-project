@@ -4,7 +4,7 @@ import random
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt6.QtCore import Qt, QPointF, QTimer
 from PyQt6.QtGui import QPainter, QPolygonF, QColor, QBrush, QPen, QFont
-from d20dice import roll_dice
+from diceClass import *
 
 class DiceWidget(QWidget):
     def __init__(self, parent=None):
@@ -92,8 +92,9 @@ class DiceWidget(QWidget):
                 self._clamp_dice_pos()
 
             if self.spin_speed < 0.5:
+                die = Dice(self.dice_type)
                 self.rolling = False
-                self.result = roll_dice(self.dice_type)
+                self.result = die.roll_dice()
 
         self.update()
 
