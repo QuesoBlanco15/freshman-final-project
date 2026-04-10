@@ -1,7 +1,7 @@
 
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget , QStackedLayout
 from d20dice import roll_dice
 
 # Sidebar View
@@ -9,17 +9,35 @@ from d20dice import roll_dice
         # Add Settings
         # Add Characters
         # Add an Add Characters
+    #added by Andre:
+        # a character selection/creation/deletion that will be inside of the sidebar
+        # A widget that adds a new Character to the bar if clicked
 class SidebarView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
+        sidebar_layout = QVBoxLayout(self)
+        character_layout = QVBoxLayout()
         settings = QPushButton()
         settings.setIcon(QIcon("icons/setting-lines.png"))
         settings.setIconSize(QSize(25, 25))
 
-        sidebar_layout = QVBoxLayout(self)
-        sidebar_layout.addWidget(QLabel("Sidebar"))
-        sidebar_layout.addWidget(QListWidget())
+        add_char_btn = QPushButton("add")
+        add_char_btn.clicked.connect(lambda:self.add_new_character(character_layout))
+
+        sidebar_layout.addLayout(character_layout)
         sidebar_layout.addWidget(settings)
+        character_layout.addWidget(add_char_btn)
+
+    def add_new_character(self,character_layout):
+        count = 0
+        for i in range(character_layout.count()):
+            item = character_layout.itemAt(i)
+            if item.widget() is not None:
+                count+=1
+        char_name = str(count)
+        new_char = QPushButton(char_name)
+        character_layout.addWidget(new_char)
+
 
 # Character Sheet View
     # TO DO
