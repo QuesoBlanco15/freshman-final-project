@@ -69,7 +69,7 @@ class DiceView(QFrame):
         self.dice = DiceWidget(self)
 
         self.dice_select = QComboBox(self)
-        self.dice_select.addItems(["d4", "d8", "d10", "d12", "d20"])
+        self.dice_select.addItems(["d4", "d6", "d8", "d10", "d12", "d20"])
         self.dice_select.setCurrentText("d20")
         self.dice_select.currentTextChanged.connect(
             lambda text: self.dice.set_dice(int(text[1:]))

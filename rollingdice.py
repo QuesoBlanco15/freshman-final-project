@@ -122,6 +122,8 @@ class DiceWidget(QWidget):
             sides = 4
         elif self.dice_type == 8:
             sides = 3
+        elif self.dice_type == 6:
+            sides = 4
         elif self.dice_type == 4:
             sides = 3
         points = [
@@ -146,18 +148,19 @@ class DiceWidget(QWidget):
         painter.setPen(QPen(edge_color, 1.8))
         painter.drawPolygon(poly)
 
-        tri_r = r * .65
-        tri_pts = [
-            QPointF(
-                tri_r * math.cos(math.radians(i * 120 - 90)),
-                tri_r * math.sin(math.radians(i * 120 - 90)),
-            )
-            for i in range(3)
-        ]
-        tri_poly = QPolygonF(tri_pts)
-        painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.setPen(QPen(QColor(180, 70, 50, 140), 1.0))
-        painter.drawPolygon(tri_poly)
+        if (self.dice_type != 4) or (self.dice_type != 6):
+            tri_r = r * .65
+            tri_pts = [
+                QPointF(
+                    tri_r * math.cos(math.radians(i * 120 - 90)),
+                    tri_r * math.sin(math.radians(i * 120 - 90)),
+                )
+                for i in range(3)
+            ]
+            tri_poly = QPolygonF(tri_pts)
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.setPen(QPen(QColor(180, 70, 50, 140), 1.0))
+            painter.drawPolygon(tri_poly)
 
         painter.rotate(-self.angle) # keep the result upright
 
