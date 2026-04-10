@@ -72,8 +72,8 @@ class DiceWidget(QWidget):
         else:
             scale = min(speed * 0.9, 28.0) / max(speed, 0.001)
             self.travel_vel = QPointF(
-                self.velocity.x() * scale * 0.50,
-                self.velocity.y() * scale * 0.50,
+                self.velocity.x() * scale * 0.9,
+                self.velocity.y() * scale * 0.9,
             )
 
         self.spin_speed = min(speed * 0.9, 28.0)
