@@ -1,7 +1,7 @@
 
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget,QScrollArea
 from diceClass import *
 from rollingdice import DiceWidget
 
@@ -17,17 +17,24 @@ class SidebarView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         sidebar_layout = QVBoxLayout(self)
-        character_layout = QVBoxLayout()
+        scroll = QScrollArea() 
+        scroll.setWidgetResizable(True) 
+        character = QWidget() 
+        character_layout = QVBoxLayout(character) 
+        scroll.setWidget(character)
+
         settings = QPushButton()
         settings.setIcon(QIcon("icons/setting-lines.png"))
         settings.setIconSize(QSize(25, 25))
 
         add_char_btn = QPushButton("add")
+        add_char_btn.setFixedWidth(50)
         add_char_btn.clicked.connect(lambda:self.add_new_character(character_layout))
 
-        sidebar_layout.addLayout(character_layout)
+        sidebar_layout.addWidget(scroll)
         sidebar_layout.addWidget(settings)
         character_layout.addWidget(add_char_btn)
+        character_layout.addStretch()
 
     def add_new_character(self,character_layout):
         count = 0
@@ -37,7 +44,8 @@ class SidebarView(QWidget):
                 count+=1
         char_name = str(count)
         new_char = QPushButton(char_name)
-        character_layout.addWidget(new_char)
+        new_char.setFixedWidth(50)
+        character_layout.insertWidget(count-1,new_char)
 
 
 # Character Sheet View
