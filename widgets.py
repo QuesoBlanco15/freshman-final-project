@@ -1,7 +1,7 @@
 import sys
 import math
 import random
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt, QPointF, QTimer
 from PyQt6.QtGui import QPainter, QPolygonF, QColor, QBrush, QPen, QFont
 from diceClass import *
@@ -212,3 +212,11 @@ class DiceWidget(QWidget):
     def resizeEvent(self, event):
         self.dice_pos = QPointF(self.width() / 2, self.height() / 2)
         super().resizeEvent(event)
+
+class SettingsWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Settings")
+        layout.addWidget(self.label)
+        self.setLayout(layout)
