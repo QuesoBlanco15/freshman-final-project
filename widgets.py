@@ -1,7 +1,7 @@
 import sys
 import math
 import random
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt, QPointF, QTimer
 from PyQt6.QtGui import QPainter, QPolygonF, QColor, QBrush, QPen, QFont
 from diceClass import *
@@ -122,6 +122,8 @@ class DiceWidget(QWidget):
             sides = 4
         elif self.dice_type == 8:
             sides = 3
+        elif self.dice_type == 6:
+            sides = 4
         elif self.dice_type == 4:
             sides = 3
         points = [
@@ -146,18 +148,19 @@ class DiceWidget(QWidget):
         painter.setPen(QPen(edge_color, 1.8))
         painter.drawPolygon(poly)
 
-        tri_r = r * .65
-        tri_pts = [
-            QPointF(
-                tri_r * math.cos(math.radians(i * 120 - 90)),
-                tri_r * math.sin(math.radians(i * 120 - 90)),
-            )
-            for i in range(3)
-        ]
-        tri_poly = QPolygonF(tri_pts)
-        painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.setPen(QPen(QColor(180, 70, 50, 140), 1.0))
-        painter.drawPolygon(tri_poly)
+        if (self.dice_type != 4) or (self.dice_type != 6):
+            tri_r = r * .65
+            tri_pts = [
+                QPointF(
+                    tri_r * math.cos(math.radians(i * 120 - 90)),
+                    tri_r * math.sin(math.radians(i * 120 - 90)),
+                )
+                for i in range(3)
+            ]
+            tri_poly = QPolygonF(tri_pts)
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.setPen(QPen(QColor(180, 70, 50, 140), 1.0))
+            painter.drawPolygon(tri_poly)
 
         painter.rotate(-self.angle) # keep the result upright
 
@@ -209,3 +212,11 @@ class DiceWidget(QWidget):
     def resizeEvent(self, event):
         self.dice_pos = QPointF(self.width() / 2, self.height() / 2)
         super().resizeEvent(event)
+
+class SettingsWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Settings")
+        layout.addWidget(self.label)
+        self.setLayout(layout)

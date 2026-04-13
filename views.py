@@ -3,7 +3,7 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget,QScrollArea
 from diceClass import *
-from rollingdice import DiceWidget
+from widgets import *
 
 # Sidebar View
     # TO DO
@@ -26,6 +26,12 @@ class SidebarView(QWidget):
         settings = QPushButton()
         settings.setIcon(QIcon("icons/setting-lines.png"))
         settings.setIconSize(QSize(25, 25))
+        character_layout = QVBoxLayout()
+        self.settings = QPushButton()
+        self.settings.setIcon(QIcon("icons/setting-lines.png"))
+        self.settings.setIconSize(QSize(25, 25))
+        self.settings.clicked.connect(self.show_settings)
+        
 
         add_char_btn = QPushButton("add")
         add_char_btn.setFixedWidth(50)
@@ -33,6 +39,8 @@ class SidebarView(QWidget):
 
         sidebar_layout.addWidget(scroll)
         sidebar_layout.addWidget(settings)
+        sidebar_layout.addLayout(character_layout)
+        sidebar_layout.addWidget(self.settings)
         character_layout.addWidget(add_char_btn)
         character_layout.addStretch()
 
@@ -46,6 +54,10 @@ class SidebarView(QWidget):
         new_char = QPushButton(char_name)
         new_char.setFixedWidth(50)
         character_layout.insertWidget(count-1,new_char)
+
+    def show_settings(self, checked):
+        self.w = SettingsWidget()
+        self.w.show()
 
 
 # Character Sheet View
@@ -77,7 +89,7 @@ class DiceView(QFrame):
         self.dice = DiceWidget(self)
 
         self.dice_select = QComboBox(self)
-        self.dice_select.addItems(["d4", "d8", "d10", "d12", "d20"])
+        self.dice_select.addItems(["d4", "d6", "d8", "d10", "d12", "d20"])
         self.dice_select.setCurrentText("d20")
         self.dice_select.currentTextChanged.connect(
             lambda text: self.dice.set_dice(int(text[1:]))
