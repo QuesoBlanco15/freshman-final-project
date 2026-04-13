@@ -23,9 +23,7 @@ class SidebarView(QWidget):
         character_layout = QVBoxLayout(character) 
         scroll.setWidget(character)
 
-        settings = QPushButton()
-        settings.setIcon(QIcon("icons/setting-lines.png"))
-        settings.setIconSize(QSize(25, 25))
+        
         character_layout = QVBoxLayout()
         self.settings = QPushButton()
         self.settings.setIcon(QIcon("icons/setting-lines.png"))
@@ -38,7 +36,6 @@ class SidebarView(QWidget):
         add_char_btn.clicked.connect(lambda:self.add_new_character(character_layout))
 
         sidebar_layout.addWidget(scroll)
-        sidebar_layout.addWidget(settings)
         sidebar_layout.addLayout(character_layout)
         sidebar_layout.addWidget(self.settings)
         character_layout.addWidget(add_char_btn)
