@@ -1,7 +1,7 @@
 import sys
 import math
 import random
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTabWidget
 from PyQt6.QtCore import Qt, QPointF, QTimer
 from PyQt6.QtGui import QPainter, QPolygonF, QColor, QBrush, QPen, QFont
 from diceClass import *
@@ -213,10 +213,45 @@ class DiceWidget(QWidget):
         self.dice_pos = QPointF(self.width() / 2, self.height() / 2)
         super().resizeEvent(event)
 
+class SettingsView(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setStyleSheet("""
+                            SettingsView {
+        background: qlineargradient(
+            x1: 0, y1: 0, x2: 1, y2: 1,
+            stop: 0 #0d0d0d, stop: 1 #1c1c1c
+        );
+        color: white;
+    }
+                           """)
+        
+        self.tabs = QTabWidget()
+        self.tabs.setTabPosition(QTabWidget.TabPosition.North)
+        self.tabs.setMovable(False)
+
+        for settings in ["General", "Campaign", "Customization", "About"]:
+            self.tabs.addTab(SettingsWidget(), settings)
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.tabs)
+        self.setLayout(layout)
+
 class SettingsWidget(QWidget):
     def __init__(self):
         super().__init__()
+        self.setStyleSheet("""
+                            SettingsWidget {
+        background: qlineargradient(
+            x1: 0, y1: 0, x2: 1, y2: 1,
+            stop: 0 #ff6b6b, stop: 1 #feca5715
+        );
+        color: white;
+    }
+                           """)
+
+        self.label = QLabel("General")
+
         layout = QVBoxLayout()
-        self.label = QLabel("Settings")
         layout.addWidget(self.label)
         self.setLayout(layout)

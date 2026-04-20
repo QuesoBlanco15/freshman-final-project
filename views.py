@@ -24,7 +24,6 @@ class SidebarView(QWidget):
         scroll.setWidget(character)
 
         
-        character_layout = QVBoxLayout()
         self.settings = QPushButton()
         self.settings.setIcon(QIcon("icons/setting-lines.png"))
         self.settings.setIconSize(QSize(25, 25))
@@ -53,7 +52,7 @@ class SidebarView(QWidget):
         character_layout.insertWidget(count-1,new_char)
 
     def show_settings(self, checked):
-        self.w = SettingsWidget()
+        self.w = SettingsView()
         self.w.show()
 
 
