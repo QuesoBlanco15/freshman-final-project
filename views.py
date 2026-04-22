@@ -97,7 +97,7 @@ class DiceView(QFrame):
 
     def diceroll(self):
         die = Dice(self.die_type)
-        roll = str(die.roll_dice())
+        roll = str(die.roll_dice("str"))
         self.button.setText(roll)
 
         

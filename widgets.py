@@ -94,7 +94,7 @@ class DiceWidget(QWidget):
             if self.spin_speed < 0.5:
                 die = Dice(self.dice_type)
                 self.rolling = False
-                self.result = die.roll_dice()
+                self.result = die.roll_dice("str")
 
         self.update()
 
