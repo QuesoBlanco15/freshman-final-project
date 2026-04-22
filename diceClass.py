@@ -66,12 +66,18 @@ class Dice():
     def char_mod(self, val):
         self._char_mod = val
     
+
+    #Creates a dictionary to connect every modifier to their respective values. 
+    #Allows interchangability in the modifiers and stats, a "one function for all" in a sense.
     def set_mod(self, modifier, value):
         list = {"str":self._str_mod, "dex":self._dex_mod, "con":self._con_mod, "int":self._int_mod, "wis":self._wis_mod, "char":self._char_mod}
         list[modifier] += self.mod(value)
         return list[modifier]
 
 
+
+    #Modifiers are assigned their values based on a 50/50 split system, values below 10 become negative, values above 11 become positive.
+    #Its possible to have stats as high as 30, but the values would work all the same and for simplicity sake I ignored it (Its uncommon).
     def mod(self, modifier):
      lower_half =  [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
      upper_half = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
@@ -109,12 +115,13 @@ class Dice():
     # Similar to previous function except can specify number of times rolled. 
     # In the future, can include stat modifiers or show each dice roll in a 
     # returned list instead of just the total added up. 
+    # Added a dictionary to choose which modifier to add to the roll. Intended for a button / switch system, can be changed.
     def roll_dice(self, modifier): 
         list = {"str":self._str_mod, "dex":self._dex_mod, "con":self._con_mod, "int":self._int_mod, "wis":self._wis_mod, "char":self._char_mod}
         dice_roll = 0
         for x in range(self.qty):
             seed()
-            dice_roll += int(random()*self._side + 1) + list[modifier]
+            dice_roll += (int(random()*self._side + 1) + list[modifier])
         return f"{dice_roll}"
     
     def modded_diceRoll(self):
