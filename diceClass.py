@@ -11,10 +11,10 @@ class Dice():
         self.qty = qty
         self.stats = []
         self.stats_mod = []
-        self.str_mod = 5
+        self.str_mod = 0
         self.dex_mod = 3
         self.con_mod = 2
-        self.int_mod = 0
+        self.int_mod = 5
         self.wis_mod = 1
         self.char_mod = 0
 
@@ -71,7 +71,7 @@ class Dice():
     #Allows interchangability in the modifiers and stats, a "one function for all" in a sense.
     def set_mod(self, modifier, value):
         list = {"str":self._str_mod, "dex":self._dex_mod, "con":self._con_mod, "int":self._int_mod, "wis":self._wis_mod, "char":self._char_mod}
-        list[modifier] += self.mod(value)
+        list[modifier] = self.mod(value)
         return list[modifier]
 
 
