@@ -11,11 +11,11 @@ class Dice():
         self.qty = qty
         self.stats = []
         self.stats_mod = []
-        self.str_mod = 0
-        self.dex_mod = 0
-        self.con_mod = 0
+        self.str_mod = 5
+        self.dex_mod = 3
+        self.con_mod = 2
         self.int_mod = 0
-        self.wis_mod = 0
+        self.wis_mod = 1
         self.char_mod = 0
 
     # Strength modifier
@@ -85,6 +85,10 @@ class Dice():
         return floor((lower_half.index(modifier) / 2) * (-1))
      if (modifier in upper_half):
         return trunc(((upper_half.index(modifier)+1)  / 2) * (1))
+     
+    def print_mod(self, modifier):
+        list = {"str":self._str_mod, "dex":self._dex_mod, "con":self._con_mod, "int":self._int_mod, "wis":self._wis_mod, "char":self._char_mod}
+        return list[modifier]
 
     @property
     def side(self): 

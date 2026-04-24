@@ -13,6 +13,8 @@ from widgets import *
     #added by Andre:
         # a character selection/creation/deletion that will be inside of the sidebar
         # A widget that adds a new Character to the bar if clicked
+roll = 0     
+die = Dice()
 class SidebarView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -96,7 +98,9 @@ class DiceView(QFrame):
         panel_layout.addWidget(self.dice_select)
 
     def diceroll(self):
+        global die
         die = Dice(self.die_type)
+        global roll
         roll = str(die.roll_dice("str"))
         self.button.setText(roll)
 
@@ -130,8 +134,10 @@ class MultiplierView(QFrame):
         
         result_container = QWidget()
         result_layout = QVBoxLayout(result_container)
-        for i in range(6):
-            result_layout.addWidget(QLabel("Some Number"))
+        list = ["str", "dex", "con", "int", "wis", "char"]
+        for i in list:
+        
+            result_layout.addWidget(QLabel(f"+{die.print_mod(i)}"))
         
         multi_view.addWidget(mod_container)
         multi_view.addWidget(result_container)
