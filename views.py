@@ -1,7 +1,7 @@
 
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QFont
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget,QScrollArea
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget,QScrollArea, QSplitter, QHBoxLayout
 from diceClass import *
 from widgets import *
 
@@ -111,5 +111,29 @@ class MultiplierView(QFrame):
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
 
         multiplier_layout = QVBoxLayout(self)
-        multiplier_layout.addWidget(QLabel("Multiplier View"))
-        multiplier_layout.addWidget(QTextEdit())
+        
+        title = QLabel("Multipliers")
+        title.setFont(QFont("Inter", 24))
+
+        multiplier_layout.addWidget(title)
+        
+        multi_container = QWidget()
+        multi_view = QHBoxLayout(multi_container)
+
+        # Demo Mods
+        mods = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
+        mod_container = QWidget()
+        mod_layout = QVBoxLayout(mod_container)
+
+        for mod in mods:
+            mod_layout.addWidget(QLabel(mod))
+        
+        result_container = QWidget()
+        result_layout = QVBoxLayout(result_container)
+        for i in range(6):
+            result_layout.addWidget(QLabel("Some Number"))
+        
+        multi_view.addWidget(mod_container)
+        multi_view.addWidget(result_container)
+
+        multiplier_layout.addWidget(multi_container)
