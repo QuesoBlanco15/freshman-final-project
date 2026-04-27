@@ -29,11 +29,11 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
 
-        # Sidebar View
-        sidebar = SidebarView()
-
-        # Character Sheet View
+        #character sheet view
         characterSheet = CharacterSheetView()
+
+        #side bar view pass the character sheet through so it can use its functions
+        sidebar = SidebarView(characterSheet)
 
         # Dice View
         dice = DiceView()
