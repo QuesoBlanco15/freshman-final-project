@@ -78,6 +78,7 @@ class CharacterSheetView(QFrame):
         # Add Drag to roll maybe
         # Add Awesome Animations
 class DiceView(QFrame):
+    roll_completed = pyqtSignal(int)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
@@ -92,6 +93,7 @@ class DiceView(QFrame):
         self.dice_select.currentTextChanged.connect(
             lambda text: self.dice.set_dice(int(text[1:]))
         )
+        self.dice.roll_completed.connect(self.roll_completed)
 
         panel_layout = QVBoxLayout(self)
         panel_layout.addWidget(self.dice)
@@ -132,14 +134,27 @@ class MultiplierView(QFrame):
         for mod in mods:
             mod_layout.addWidget(QLabel(mod))
         
-        result_container = QWidget()
-        result_layout = QVBoxLayout(result_container)
+        add_container = QWidget()
+        add_layout = QVBoxLayout(add_container)
         list = ["str", "dex", "con", "int", "wis", "char"]
         for i in list:
+            add_layout.addWidget(QLabel(f"+{die.print_mod(i)}"))
         
-            result_layout.addWidget(QLabel(f"+{die.print_mod(i)}"))
-        
+        result_container = QWidget()
+        result_layout = QVBoxLayout(result_container)
+        self.result = 0
+        self.result_labels = []  # save references
+        for i in range(6):
+            label = QLabel("0")
+            self.result_labels.append(label)
+            result_layout.addWidget(label)
+
         multi_view.addWidget(mod_container)
+        multi_view.addWidget(add_container)
         multi_view.addWidget(result_container)
 
         multiplier_layout.addWidget(multi_container)
+
+    def on_roll_completed(self, total: int):
+        for label in self.result_labels:
+            label.setText(str(total))

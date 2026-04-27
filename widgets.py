@@ -2,11 +2,13 @@ import sys
 import math
 import random
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTabWidget
-from PyQt6.QtCore import Qt, QPointF, QTimer
+from PyQt6.QtCore import Qt, QPointF, QTimer, pyqtSignal
 from PyQt6.QtGui import QPainter, QPolygonF, QColor, QBrush, QPen, QFont
 from diceClass import *
 
 class DiceWidget(QWidget):
+    roll_completed = pyqtSignal(int)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setCursor(Qt.CursorShape.OpenHandCursor)
@@ -95,6 +97,7 @@ class DiceWidget(QWidget):
                 die = Dice(self.dice_type)
                 self.rolling = False
                 self.result = die.roll_dice("str")
+                self.roll_completed.emit(int(self.result))
 
         self.update()
 

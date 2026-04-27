@@ -41,6 +41,8 @@ class MainWindow(QMainWindow):
         # Dice Multipliers/stats view (?)
         multipliers = MultiplierView()
 
+        dice.roll_completed.connect(multipliers.on_roll_completed)
+
          # Right side splits
         right_side = QSplitter(Qt.Orientation.Vertical)
         right_side.addWidget(dice)
