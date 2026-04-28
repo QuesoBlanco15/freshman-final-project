@@ -32,11 +32,31 @@ class DiceWidget(QWidget):
         self.last_cursor = QPointF()
         self.velocity = QPointF()
         self.travel_vel = QPointF()
+        self.body_color = QColor(75, 20, 20)
+        self.edge_color = QColor(210, 100, 60)
+        self.num_color = QColor(255, 200, 170)
+        self.show_triangle = True
 
         # Timer for annimation (sits around 60fps i think?)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._tick)
         self.timer.start(16)
+
+    def set_body_color(self, value):
+        self.body_color = value
+        self.update()
+
+    def set_edge_color(self, value):
+        self.edge_color = value
+        self.update()
+
+    def set_num_color(self, value):
+        self.num_color = value
+        self.update()
+
+    def set_show_triangle(self, value):
+        self.show_triangle = value
+        self.update()
 
     def mousePressEvent(self, event):
         if event.button() != Qt.MouseButton.LeftButton:
@@ -150,30 +170,31 @@ class DiceWidget(QWidget):
         painter.drawPolygon(poly)
         painter.translate(-4, -6)
 
-        body_color = QColor(75, 20, 20) if not self.dragging else QColor(100, 30, 30)
+        body_color = self.body_color 
         painter.setBrush(QBrush(body_color))
-        edge_color = QColor(210, 100, 60)
+        edge_color = self.edge_color
         painter.setPen(QPen(edge_color, 1.8))
         painter.drawPolygon(poly)
 
-        if (self.dice_type != 4) or (self.dice_type != 6):
-            tri_r = r * .65
-            tri_pts = [
-                QPointF(
-                    tri_r * math.cos(math.radians(i * 120 - 90)),
-                    tri_r * math.sin(math.radians(i * 120 - 90)),
-                )
-                for i in range(3)
-            ]
-            tri_poly = QPolygonF(tri_pts)
-            painter.setBrush(Qt.BrushStyle.NoBrush)
-            painter.setPen(QPen(QColor(180, 70, 50, 140), 1.0))
-            painter.drawPolygon(tri_poly)
+        if self.show_triangle == True:
+            if (self.dice_type != 4) or (self.dice_type != 6):
+                tri_r = r * .65
+                tri_pts = [
+                    QPointF(
+                        tri_r * math.cos(math.radians(i * 120 - 90)),
+                        tri_r * math.sin(math.radians(i * 120 - 90)),
+                    )
+                    for i in range(3)
+                ]
+                tri_poly = QPolygonF(tri_pts)
+                painter.setBrush(Qt.BrushStyle.NoBrush)
+                painter.setPen(QPen(edge_color, 1.0))
+                painter.drawPolygon(tri_poly)
 
         painter.rotate(-self.angle) # keep the result upright
 
         if self.result is not None:
-            num_color = QColor(255, 200, 170)
+            num_color = self.num_color
             font = QFont("Inter", int(r * 0.4), QFont.Weight.Bold)
             painter.setFont(font)
             painter.setPen(num_color)
@@ -188,14 +209,14 @@ class DiceWidget(QWidget):
             if self.spin_speed > 4:
                 font = QFont("Inter", int(r * 0.4), QFont.Weight.Bold)
                 painter.setFont(font)
-                painter.setPen(QColor(200, 140, 100, 160))
+                painter.setPen(self.num_color)
                 fm = painter.fontMetrics()
                 painter.drawText(int(-fm.horizontalAdvance("?") / 2), int(fm.height() / 3), "?")
 
         else:
             font = QFont("Inter", int(r * 0.2))
             painter.setFont(font)
-            painter.setPen(QColor(180, 110, 80, 180))
+            painter.setPen(self.num_color)
             message = "Drag to Throw"
             fm = painter.fontMetrics()
             painter.drawText(int(-fm.horizontalAdvance(message) / 2), int(fm.height() / 3), message)
@@ -495,9 +516,9 @@ class SettingsView(QWidget):
     
     def _build_customization(self):
         self.THEMES = {
-            "Crimson": (QColor(75, 20, 20),   QColor(210, 100, 60),  QColor(255, 200, 170)),
-            "Arcane":  (QColor(30, 15, 60),   QColor(130, 80, 220),  QColor(210, 180, 255)),
-            "Forest":  (QColor(15, 45, 20),   QColor(60, 160, 80),   QColor(180, 240, 190)),
+            "Bloody Crimson": (QColor(75, 20, 20),   QColor(210, 100, 60),  QColor(255, 200, 170)),
+            "Arcane Blue":  (QColor(30, 15, 60),   QColor(130, 80, 220),  QColor(210, 180, 255)),
+            "Forest Green":  (QColor(15, 45, 20),   QColor(60, 160, 80),   QColor(180, 240, 190)),
         }
         self._active_theme: str | None = "Crimson"
 

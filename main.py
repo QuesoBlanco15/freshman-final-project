@@ -5,8 +5,6 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QSplitter, QVBox
 from diceClass import *
 from views import *
 
-
-# Subclass QMainWindow to customize your application's main window
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -29,14 +27,22 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
 
+        # Dice View
+        dice = DiceView()
+
+        def on_settings_opened(settings_view: SettingsView):
+            settings_view.dice_body_color_changed.connect(dice.dice.set_body_color)
+            settings_view.dice_edge_color_changed.connect(dice.dice.set_edge_color)
+            settings_view.dice_number_color_changed.connect(dice.dice.set_num_color)
+            settings_view.inner_triangle_toggled.connect(dice.dice.set_show_triangle)
+            settings_view.default_die_changed.connect(dice.dice.set_dice)
+
+
         # Sidebar View
-        sidebar = SidebarView()
+        sidebar = SidebarView(on_open_settings=on_settings_opened)
 
         # Character Sheet View
         characterSheet = CharacterSheetView()
-
-        # Dice View
-        dice = DiceView()
 
         # Dice Multipliers/stats view (?)
         multipliers = MultiplierView()

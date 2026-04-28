@@ -16,7 +16,7 @@ from widgets import *
 roll = 0     
 die = Dice()
 class SidebarView(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, on_open_settings=None, parent=None):
         super().__init__(parent)
         sidebar_layout = QVBoxLayout(self)
         scroll = QScrollArea() 
@@ -30,6 +30,7 @@ class SidebarView(QWidget):
         self.settings.setIcon(QIcon("icons/setting-lines.png"))
         self.settings.setIconSize(QSize(25, 25))
         self.settings.clicked.connect(self.show_settings)
+        self._on_open_settings = on_open_settings
         
 
         add_char_btn = QPushButton("add")
@@ -56,6 +57,8 @@ class SidebarView(QWidget):
     def show_settings(self, checked):
         self.w = SettingsView()
         self.w.show()
+        if self._on_open_settings:
+            self._on_open_settings(self.w)
 
 
 # Character Sheet View
