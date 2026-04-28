@@ -509,7 +509,6 @@ class SettingsView(QWidget):
         rows = [
             RowWidget("Campaign name", "Active campaign or session title", self.campaign_input),
             RowWidget("Default die", "Die shown on startup", self.default_die_combo),
-            RowWidget("Animation speed", "How fast the dice spin and settle", self.anim_speed_combo),
         ]
 
         self._add_section("General", section_label("General"), SectionCard(rows))
