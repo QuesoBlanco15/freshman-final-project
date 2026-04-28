@@ -464,7 +464,6 @@ class SettingsView(QWidget):
         self._section_widgets[name] = wrapper
 
     def _build_general(self):
-        # Campaign name row (text input)
         self.campaign_input = QLineEdit()
         self.campaign_input.setPlaceholderText("My Campaign")
         self.campaign_input.setFixedWidth(180)
@@ -490,7 +489,6 @@ class SettingsView(QWidget):
             RowWidget("Campaign name", "Active campaign or session title", self.campaign_input),
             RowWidget("Default die", "Die shown on startup", self.default_die_combo),
             RowWidget("Animation speed", "How fast the dice spin and settle", self.anim_speed_combo),
-            RowWidget("Sound effects", "Play sounds on roll (coming soon)", self.sound_toggle),
         ]
 
         self._add_section("General", section_label("General"), SectionCard(rows))
@@ -699,7 +697,6 @@ class SettingsView(QWidget):
         self._content_layout.addWidget(wrapper)
         self._section_widgets["About"] = wrapper
 
-    # FIX 1: moved out of _build_about to class level
     def _scroll_to(self, name: str):
         widget = self._section_widgets.get(name)
         if widget:
