@@ -18,12 +18,6 @@ die = Dice()
 class SidebarView(QWidget):
     def __init__(self, on_open_settings=None, parent=None):
         super().__init__(parent)
-        self.setStyleSheet(f"""
-            SidebarView {{
-                border: 4px solid {QColor(75, 20, 20)};
-                border-radius: 4px;
-            }}
-        """)
 
         sidebar_layout = QVBoxLayout(self)
         scroll = QScrollArea() 
@@ -66,15 +60,6 @@ class SidebarView(QWidget):
         self.w.show()
         if self._on_open_settings:
             self._on_open_settings(self.w)
-    
-    def apply_accent(self, color: QColor):
-        self.setStyleSheet(f"""
-            QFrame {{
-                border: 2px solid {color.name()};
-                border-radius: 2px;
-            }}
-        """)
-
 
 # Character Sheet View
     # TO DO
