@@ -18,6 +18,13 @@ die = Dice()
 class SidebarView(QWidget):
     def __init__(self, on_open_settings=None, parent=None):
         super().__init__(parent)
+        self.setStyleSheet(f"""
+            SidebarView {{
+                border: 4px solid {QColor(75, 20, 20)};
+                border-radius: 4px;
+            }}
+        """)
+
         sidebar_layout = QVBoxLayout(self)
         scroll = QScrollArea() 
         scroll.setWidgetResizable(True) 
@@ -59,6 +66,14 @@ class SidebarView(QWidget):
         self.w.show()
         if self._on_open_settings:
             self._on_open_settings(self.w)
+    
+    def apply_accent(self, color: QColor):
+        self.setStyleSheet(f"""
+            QFrame {{
+                border: 2px solid {color.name()};
+                border-radius: 2px;
+            }}
+        """)
 
 
 # Character Sheet View
@@ -70,10 +85,24 @@ class CharacterSheetView(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
+        self.setStyleSheet(f"""
+            CharacterSheetView {{
+                border: 2px solid #4B1414;
+                border-radius: 4px;
+            }}
+        """)
 
         content_layout = QVBoxLayout(self)
         content_layout.addWidget(QLabel("Main Content"))
         content_layout.addWidget(QTextEdit())
+
+    def apply_accent(self, color: QColor):
+        self.setStyleSheet(f"""
+            CharacterSheetView {{
+                border: 2px solid {color.name()};
+                border-radius: 4px;
+            }}
+        """)
 
 # Dice View
     # TO DO
@@ -86,6 +115,12 @@ class DiceView(QFrame):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
         self.setCursor(Qt.CursorShape.OpenHandCursor)
+        self.setStyleSheet(f"""
+            DiceView {{
+                border: 2px solid #4B1414;
+                border-radius: 4px;
+            }}
+        """)
 
     
         self.dice = DiceWidget(self)
@@ -109,6 +144,14 @@ class DiceView(QFrame):
         roll = str(die.roll_dice("str"))
         self.button.setText(roll)
 
+    def apply_accent(self, color: QColor):
+        self.setStyleSheet(f"""
+            DiceView {{
+                border: 2px solid {color.name()};
+                border-radius: 4px;
+            }}
+        """)
+
         
 
 # Multiplier View
@@ -118,6 +161,12 @@ class MultiplierView(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
+        self.setStyleSheet(f"""
+            MultiplierView {{
+                border: 2px solid #4B1414;
+                border-radius: 4px;
+            }}
+        """)
 
         multiplier_layout = QVBoxLayout(self)
         
@@ -161,3 +210,11 @@ class MultiplierView(QFrame):
     def on_roll_completed(self, total: int):
         for label in self.result_labels:
             label.setText(str(total))
+
+    def apply_accent(self, color: QColor):
+        self.setStyleSheet(f"""
+            MultiplierView {{
+                border: 2px solid {color.name()};
+                border-radius: 4px;
+            }}
+        """)

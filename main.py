@@ -36,6 +36,9 @@ class MainWindow(QMainWindow):
             settings_view.dice_number_color_changed.connect(dice.dice.set_num_color)
             settings_view.inner_triangle_toggled.connect(dice.dice.set_show_triangle)
             settings_view.default_die_changed.connect(dice.dice.set_dice)
+            settings_view.dice_body_color_changed.connect(dice.apply_accent)
+            settings_view.dice_body_color_changed.connect(characterSheet.apply_accent)
+            settings_view.dice_body_color_changed.connect(multipliers.apply_accent)
 
 
         # Sidebar View

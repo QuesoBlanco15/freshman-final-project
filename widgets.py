@@ -501,11 +501,6 @@ class SettingsView(QWidget):
             lambda t: self.default_die_changed.emit(int(t[1:]))
         )
 
-        self.anim_speed_combo = styled_combo(["Slow", "Normal", "Fast"], "Normal")
-        self.anim_speed_combo.currentTextChanged.connect(self.animation_speed_changed)
-
-        self.sound_toggle = ToggleSwitch(checked=False)
-
         rows = [
             RowWidget("Campaign name", "Active campaign or session title", self.campaign_input),
             RowWidget("Default die", "Die shown on startup", self.default_die_combo),
@@ -515,9 +510,10 @@ class SettingsView(QWidget):
     
     def _build_customization(self):
         self.THEMES = {
-            "Bloody Crimson": (QColor(75, 20, 20),   QColor(210, 100, 60),  QColor(255, 200, 170)),
-            "Arcane Blue":  (QColor(30, 15, 60),   QColor(130, 80, 220),  QColor(210, 180, 255)),
-            "Forest Green":  (QColor(15, 45, 20),   QColor(60, 160, 80),   QColor(180, 240, 190)),
+            "Crimson": (QColor(75, 20, 20),   QColor(210, 100, 60),  QColor(255, 200, 170)),
+            "Arcane":  (QColor(30, 15, 60),   QColor(130, 80, 220),  QColor(210, 180, 255)),
+            "Forest":  (QColor(15, 45, 20),   QColor(60, 160, 80),   QColor(180, 240, 190)),
+            "Bone": (QColor(45, 38, 28), QColor(180, 160, 110), QColor(235, 220, 185)),
         }
         self._active_theme: str | None = "Crimson"
 
@@ -594,9 +590,9 @@ class SettingsView(QWidget):
         )
 
         for row in [
-            RowWidget("Dice body color",  "Main fill of the die",           self.body_color_btn),
-            RowWidget("Edge accent color","Outline and inner glow",          self.edge_color_btn),
-            RowWidget("Number color",     "Color of the roll result number", self.number_color_btn),
+            RowWidget("Primary Color",  "Main fill of the die",           self.body_color_btn),
+            RowWidget("Secondary Color","Outline and inner glow",          self.edge_color_btn),
+            RowWidget("Text Color",     "Color of the roll result & all text", self.number_color_btn),
             RowWidget("Inner triangle",   "Show inner triangle decoration",  self.triangle_toggle),
         ]:
             adv_layout.addWidget(row)
