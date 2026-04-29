@@ -1,7 +1,7 @@
 import sys
 import math
 import random
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTabWidget, QFrame, QHBoxLayout, QPushButton, QColorDialog, QCheckBox, QComboBox, QScrollArea, QLineEdit
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QTabWidget, QFrame, QHBoxLayout, QPushButton, QColorDialog, QCheckBox, QComboBox, QScrollArea, QLineEdit, QStyle
 from PyQt6.QtCore import Qt, QPointF, QTimer, pyqtSignal
 from PyQt6.QtGui import QPainter, QPolygonF, QColor, QBrush, QPen, QFont
 from diceClass import *
@@ -306,10 +306,16 @@ class ColorButton(QPushButton):
         return self._color
     
     def _pick(self):
-        picked = QColorDialog.getColor(self._color, self, "Pick a color")
-        if picked.isValid():
-            self.setColor(picked)
-            self.color_changed.emit(picked)
+        dialog = QColorDialog(self._color, self)
+        dialog.setOption(QColorDialog.ColorDialogOption.DontUseNativeDialog, True)
+        dialog.setStyleSheet("* { background-color: none; color: none; }")
+        for child in dialog.findChildren(QWidget):
+            child.setStyleSheet("")
+        if dialog.exec():
+            picked = dialog.selectedColor()
+            if picked.isValid():
+                self.setColor(picked)
+                self.color_changed.emit(picked)
 
 class ToggleSwitch(QCheckBox):
     def __init__(self, checked: bool = False, parent=None):
