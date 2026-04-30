@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(main_view)
     
     def closeEvent(self, event):
-        d = self.dice.dice  # DiceWidget
+        d = self.dice.dice 
         settings = {
             "dice_type":   d.dice_type,
             "body_color":  d.body_color.name(),

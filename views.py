@@ -1,7 +1,7 @@
 
 from PyQt6.QtGui import QIcon, QFont
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget,QScrollArea, QSplitter, QHBoxLayout
+from PyQt6.QtWidgets import QPushButton, QLabel, QVBoxLayout, QFrame, QListWidget, QTextEdit, QComboBox, QWidget,QScrollArea, QSplitter, QGridLayout
 from diceClass import *
 from widgets import *
 
@@ -140,66 +140,79 @@ class DiceView(QFrame):
         
 
 # Multiplier View
-    # TO DO
-        # Genuinely don't know what the heck is happening in this box so someone add pls
 class MultiplierView(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
-        self.setStyleSheet(f"""
-            MultiplierView {{
-                border: 2px solid #4B1414;
-                border-radius: 4px;
-            }}
-        """)
+        self._apply_style("#4B1414")
 
-        multiplier_layout = QVBoxLayout(self)
-        
-        title = QLabel("Multipliers")
-        title.setFont(QFont("Inter", 24))
+        outer = QVBoxLayout(self)
 
-        multiplier_layout.addWidget(title)
-        
-        multi_container = QWidget()
-        multi_view = QHBoxLayout(multi_container)
+        title = QLabel("Modifiers")
+        title.setFont(QFont("Inter", 18, QFont.Weight.Bold))
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        outer.addWidget(title)
 
-        # Demo Mods
-        mods = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
-        mod_container = QWidget()
-        mod_layout = QVBoxLayout(mod_container)
+        # Header row
+        grid = QGridLayout()
+        grid.setColumnStretch(0, 3)
+        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(2, 1)
 
-        for mod in mods:
-            mod_layout.addWidget(QLabel(mod))
-        
-        add_container = QWidget()
-        add_layout = QVBoxLayout(add_container)
-        list = ["str", "dex", "con", "int", "wis", "char"]
-        for i in list:
-            add_layout.addWidget(QLabel(f"+{die.print_mod(i)}"))
-        
-        result_container = QWidget()
-        result_layout = QVBoxLayout(result_container)
-        self.result = 0
-        self.result_labels = []  # save references
-        for i in range(6):
-            label = QLabel("0")
-            self.result_labels.append(label)
-            result_layout.addWidget(label)
+        for col, text in enumerate(["Stat", "Mod", "Roll"]):
+            lbl = QLabel(text)
+            lbl.setFont(QFont("Inter", 10, QFont.Weight.Bold))
+            lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            lbl.setStyleSheet("color: #aaa; border-bottom: 1px solid #4B1414;")
+            grid.addWidget(lbl, 0, col)
 
-        multi_view.addWidget(mod_container)
-        multi_view.addWidget(add_container)
-        multi_view.addWidget(result_container)
+        stats = [
+            ("Strength",     "str"),
+            ("Dexterity",    "dex"),
+            ("Constitution", "con"),
+            ("Intelligence", "int"),
+            ("Wisdom",       "wis"),
+            ("Charisma",     "char"),
+        ]
 
-        multiplier_layout.addWidget(multi_container)
+        self.result_labels = []
+
+        for row, (label_text, key) in enumerate(stats, start=1):
+            bg = "background: rgba(255,255,255,0.03);" if row % 2 == 0 else ""
+
+            name_lbl = QLabel(label_text)
+            name_lbl.setStyleSheet(bg)
+
+            mod_val = die.print_mod(key)
+            mod_sign = "+" if mod_val >= 0 else ""
+            mod_lbl = QLabel(f"{mod_sign}{mod_val}")
+            mod_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            mod_lbl.setStyleSheet(f"color: #6dbf6d; font-weight: bold; {bg}")
+
+            result_lbl = QLabel("—")
+            result_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            result_lbl.setFont(QFont("Inter", 12, QFont.Weight.Bold))
+            result_lbl.setStyleSheet(f"color: #e0c080; {bg}")
+            self.result_labels.append(result_lbl)
+
+            grid.addWidget(name_lbl,   row, 0)
+            grid.addWidget(mod_lbl,    row, 1)
+            grid.addWidget(result_lbl, row, 2)
+
+        outer.addLayout(grid)
+        outer.addStretch()
 
     def on_roll_completed(self, total: int):
         for label in self.result_labels:
             label.setText(str(total))
 
-    def apply_accent(self, color: QColor):
+    def _apply_style(self, color):
         self.setStyleSheet(f"""
             MultiplierView {{
-                border: 2px solid {color.name()};
+                border: 2px solid {color};
                 border-radius: 4px;
             }}
         """)
+
+    def apply_accent(self, color: QColor):
+        self._apply_style(color.name())
