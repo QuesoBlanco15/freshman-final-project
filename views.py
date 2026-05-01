@@ -73,7 +73,8 @@ class SidebarView(QWidget):
         
         
         index = len(char_list) - 1
-        new_char_btn = QPushButton(obj.name)
+        
+        new_char_btn = QPushButton(obj.name[:4])
         new_char_btn.setFixedWidth(50)
         new_char_btn.clicked.connect(lambda _, i=index: self.set_display(i))
         new_char_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -129,7 +130,7 @@ class SidebarView(QWidget):
         char.intel = int(data["intel"])
         char.wisdom = int(data["wisdom"])
 
-        button_list[index].setText(char.name)
+        button_list[index].setText(char.name[:4])
 
 
         if current_char == char:
