@@ -41,12 +41,11 @@ class MainWindow(QMainWindow):
             settings_view.dice_body_color_changed.connect(characterSheet.apply_accent)
             settings_view.dice_body_color_changed.connect(multipliers.apply_accent)
 
-
-        # Sidebar View
-        sidebar = SidebarView(on_open_settings=on_settings_opened)
-
         # Character Sheet View
         characterSheet = CharacterSheetView()
+
+        #side bar view pass the character sheet through so it can use its functions
+        sidebar = SidebarView(characterSheet, on_open_settings=on_settings_opened)
         self.characterSheet = characterSheet
 
         # Dice Multipliers/stats view (?)
