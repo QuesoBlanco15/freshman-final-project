@@ -70,6 +70,7 @@ class SidebarView(QWidget):
         obj.constitution = data["constitution"]
         obj.intel = data["intel"]
         obj.wisdom = data["wisdom"]
+        obj.charosma = data["charisma"]
         obj.lore = data["lore"]
         obj.is_set = True
         char_list.append(obj)
@@ -120,6 +121,7 @@ class SidebarView(QWidget):
         dialog.constitution_input.setText(str(char.constitution))
         dialog.intel_input.setText(str(char.intel))
         dialog.wisdom_input.setText(str(char.wisdom))
+        dialog.charisma_input.setText(str(char.charisma))
         dialog.lore_input.setPlainText(char.lore or "")
         
         if dialog.exec() != QDialog.DialogCode.Accepted:
@@ -134,6 +136,7 @@ class SidebarView(QWidget):
         char.constitution = int(data["constitution"])
         char.intel = int(data["intel"])
         char.wisdom = int(data["wisdom"])
+        char.charisma = int(data["charisma"])
         char.lore = data["lore"]
 
         button_list[index].setText(char.name[:4])
@@ -207,6 +210,7 @@ class CharacterSheetView(QFrame):
         self.con_label = QLabel("")
         self.int_label = QLabel("")
         self.wis_label = QLabel("")
+        self.charisma_label = QLabel("")
 
         
 
@@ -218,6 +222,7 @@ class CharacterSheetView(QFrame):
         self.layout.addRow("Constitution:", self.con_label)
         self.layout.addRow("Intelligence:", self.int_label)
         self.layout.addRow("Wisdom:", self.wis_label)
+        self.layout.addRow("Charisma:",self.charisma_label)
 
         self.lore_label = QLabel("Lore")
         self.lore_label.setFont(QFont("Inter", 11, QFont.Weight.Bold))
@@ -255,6 +260,7 @@ class CharacterSheetView(QFrame):
             self.con_label.setText("")
             self.int_label.setText("")
             self.wis_label.setText("")
+            self.charisma_label.setText("")
             self.lore_edit.blockSignals(True)
             self.lore_edit.setPlainText("")
             self.lore_edit.blockSignals(False)
@@ -268,6 +274,7 @@ class CharacterSheetView(QFrame):
         self.con_label.setText(str(current_char.constitution))
         self.int_label.setText(str(current_char.intel))
         self.wis_label.setText(str(current_char.wisdom))
+        self.charisma_label.setText(str(current_char.charisma))
         self.lore_edit.blockSignals(True)
         self.lore_edit.setPlainText(current_char.lore or "")
         self.lore_edit.blockSignals(False)
@@ -312,6 +319,7 @@ class CharacterCreationDialog(QDialog):
         self.constitution_input = QLineEdit()
         self.intel_input = QLineEdit()
         self.wisdom_input = QLineEdit()
+        self.charisma_input = QLineEdit()
         self.lore_input = QTextEdit()
         self.lore_input.setPlaceholderText("Backstory / lore (optional)")
         self.lore_input.setFixedHeight(80)
@@ -325,6 +333,7 @@ class CharacterCreationDialog(QDialog):
         layout.addRow("Please enter your constitution:", self.constitution_input)
         layout.addRow("Please enter your intel:", self.intel_input)
         layout.addRow("Please enter your wisdom:", self.wisdom_input)
+        layout.addRow("Please enter your charisma:",self.charisma_input)
         layout.addRow("Lore (optional):", self.lore_input)
 
         button = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
@@ -342,6 +351,7 @@ class CharacterCreationDialog(QDialog):
             "constitution":self.constitution_input.text(),
             "intel":self.intel_input.text(),
             "wisdom":self.wisdom_input.text(),
+            "charisma":self.charisma_input.text(),
             "lore": self.lore_input.toPlainText()}
     
     def accept(self):
@@ -351,7 +361,8 @@ class CharacterCreationDialog(QDialog):
             "Dexterity": self.dexterity_input,
             "Constitution": self.constitution_input,
             "Intelligence": self.intel_input,
-            "Wisdom": self.wisdom_input
+            "Wisdom": self.wisdom_input,
+            "charisma": self.charisma_input
         }
 
         for label, widget in int_fields.items():
