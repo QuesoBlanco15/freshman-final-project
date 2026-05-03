@@ -235,7 +235,6 @@ class CharacterSheetView(QFrame):
             QTextEdit {
                 background-color: #1a1a1a;
                 color: #e0d8c8;
-                border: 1px solid #4B1414;
                 border-radius: 4px;
                 padding: 6px;
                 font-family: 'Georgia', serif;
