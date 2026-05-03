@@ -1,0 +1,32 @@
+{
+  "dice_type": 20,
+  "body_color": "#2d261c",
+  "edge_color": "#b4a06e",
+  "num_color": "#ebdcb9",
+  "show_triangle": true,
+  "characters": [
+    {
+      "name": "q",
+      "clas": "q",
+      "race": "q",
+      "strength": 12,
+      "dexterity": 12,
+      "constitution": 12,
+      "intel": 12,
+      "wisdom": 12,
+      "lore": ""
+    },
+    {
+      "name": "q",
+      "clas": "q",
+      "race": "q",
+      "strength": "1",
+      "dexterity": "1",
+      "constitution": "1",
+      "intel": "1",
+      "wisdom": "1",
+      "lore": ""
+    }
+  ],
+  "current_char_index": 1
+}

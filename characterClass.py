@@ -1,6 +1,6 @@
 #creates characters that are used to display the current character
 class Character:
-    def __init__(self,is_set = False, name="",clas="",race="",strength=0,dexterity=0,constitution=0,intel=0,wisdom=0,lore=""):
+    def __init__(self,is_set = False, name="",clas="",race="",strength=0,dexterity=0,constitution=0,intel=0,wisdom=0,charisma = 0,lore=""):
         self.is_set = is_set
         self.name = name
         self.clas = clas
@@ -10,6 +10,7 @@ class Character:
         self.constitution = constitution
         self.intel = intel
         self.wisdom = wisdom
+        self.charisma = charisma
         self.lore = lore
 
         @property
@@ -19,7 +20,7 @@ class Character:
         @is_set.setter
         def is_set(self,new_set):
             self.is_set = new_set
-            
+
         @property
         def name(self):
             return self.name
@@ -83,3 +84,11 @@ class Character:
         @wisdom.setter
         def wisdom(self,new_wisdom):
             self.wisdom = new_wisdom
+
+        @property
+        def charisma(self):
+            return self.charisma
+        
+        @charisma.setter
+        def charisma(self,new_charisma):
+            self.charisma = new_charisma
