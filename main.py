@@ -91,6 +91,7 @@ class MainWindow(QMainWindow):
                     "constitution": c.constitution,
                     "intel":        c.intel,
                     "wisdom":       c.wisdom,
+                    "lore":         c.lore,
                 }
                 for c in views.char_list
             ],
@@ -134,6 +135,7 @@ class MainWindow(QMainWindow):
                 obj.constitution = int(char_data["constitution"])
                 obj.intel        = int(char_data["intel"])
                 obj.wisdom       = int(char_data["wisdom"])
+                obj.lore         = char_data.get("lore", "")
                 obj.is_set       = True
                 views.char_list.append(obj)
  

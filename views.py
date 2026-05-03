@@ -70,6 +70,7 @@ class SidebarView(QWidget):
         obj.constitution = data["constitution"]
         obj.intel = data["intel"]
         obj.wisdom = data["wisdom"]
+        obj.lore = data["lore"]
         obj.is_set = True
         char_list.append(obj)
 
@@ -119,6 +120,7 @@ class SidebarView(QWidget):
         dialog.constitution_input.setText(str(char.constitution))
         dialog.intel_input.setText(str(char.intel))
         dialog.wisdom_input.setText(str(char.wisdom))
+        dialog.lore_input.setPlainText(char.lore or "")
         
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
@@ -132,6 +134,7 @@ class SidebarView(QWidget):
         char.constitution = int(data["constitution"])
         char.intel = int(data["intel"])
         char.wisdom = int(data["wisdom"])
+        char.lore = data["lore"]
 
         button_list[index].setText(char.name[:4])
 
@@ -216,6 +219,29 @@ class CharacterSheetView(QFrame):
         self.layout.addRow("Intelligence:", self.int_label)
         self.layout.addRow("Wisdom:", self.wis_label)
 
+        self.lore_label = QLabel("Lore")
+        self.lore_label.setFont(QFont("Inter", 11, QFont.Weight.Bold))
+        self.lore_label.setStyleSheet("color: #aaa; margin-top: 8px;")
+
+        self.lore_edit = QTextEdit()
+        self.lore_edit.setPlaceholderText("Write your character's backstory, notes, and lore here...")
+        self.lore_edit.setMinimumHeight(120)
+        self.lore_edit.setStyleSheet("""
+            QTextEdit {
+                background-color: #1a1a1a;
+                color: #e0d8c8;
+                border: 1px solid #4B1414;
+                border-radius: 4px;
+                padding: 6px;
+                font-family: 'Georgia', serif;
+                font-size: 12px;
+            }
+        """)
+        self.lore_edit.textChanged.connect(self._save_lore)
+
+        self.layout.addRow(self.lore_label)
+        self.layout.addRow(self.lore_edit)
+
         
     #updates the display to the selected character
     def update_display(self):
@@ -229,6 +255,9 @@ class CharacterSheetView(QFrame):
             self.con_label.setText("")
             self.int_label.setText("")
             self.wis_label.setText("")
+            self.lore_edit.blockSignals(True)
+            self.lore_edit.setPlainText("")
+            self.lore_edit.blockSignals(False)
             self.character_changed.emit(None)
             return
         self.name_label.setText(current_char.name)
@@ -239,7 +268,15 @@ class CharacterSheetView(QFrame):
         self.con_label.setText(str(current_char.constitution))
         self.int_label.setText(str(current_char.intel))
         self.wis_label.setText(str(current_char.wisdom))
+        self.lore_edit.blockSignals(True)
+        self.lore_edit.setPlainText(current_char.lore or "")
+        self.lore_edit.blockSignals(False)
         self.character_changed.emit(current_char)
+
+    def _save_lore(self):
+        global current_char
+        if current_char is not None:
+            current_char.lore = self.lore_edit.toPlainText()
     
     def apply_accent(self, color: QColor):
         self.setStyleSheet(f"""
@@ -275,6 +312,10 @@ class CharacterCreationDialog(QDialog):
         self.constitution_input = QLineEdit()
         self.intel_input = QLineEdit()
         self.wisdom_input = QLineEdit()
+        self.lore_input = QTextEdit()
+        self.lore_input.setPlaceholderText("Backstory / lore (optional)")
+        self.lore_input.setFixedHeight(80)
+        
 
         layout.addRow("Please enter your name:", self.name_input)
         layout.addRow("Please enter your class:", self.class_input)
@@ -284,6 +325,7 @@ class CharacterCreationDialog(QDialog):
         layout.addRow("Please enter your constitution:", self.constitution_input)
         layout.addRow("Please enter your intel:", self.intel_input)
         layout.addRow("Please enter your wisdom:", self.wisdom_input)
+        layout.addRow("Lore (optional):", self.lore_input)
 
         button = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         button.accepted.connect(self.accept)
@@ -299,7 +341,8 @@ class CharacterCreationDialog(QDialog):
             "dexterity":self.dexterity_input.text(),
             "constitution":self.constitution_input.text(),
             "intel":self.intel_input.text(),
-            "wisdom":self.wisdom_input.text()}
+            "wisdom":self.wisdom_input.text(),
+            "lore": self.lore_input.toPlainText()}
     
     def accept(self):
         
