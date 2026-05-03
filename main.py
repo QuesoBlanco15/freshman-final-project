@@ -3,6 +3,7 @@ import sys
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QSplitter, QVBoxLayout
 from diceClass import *
+import views
 from views import *
 import json, os
 
@@ -45,7 +46,7 @@ class MainWindow(QMainWindow):
         characterSheet = CharacterSheetView()
 
         #side bar view pass the character sheet through so it can use its functions
-        sidebar = SidebarView(characterSheet, on_open_settings=on_settings_opened)
+        self.sidebar = SidebarView(characterSheet, on_open_settings=on_settings_opened)
         self.characterSheet = characterSheet
 
         # Dice Multipliers/stats view (?)
@@ -56,6 +57,7 @@ class MainWindow(QMainWindow):
         self._load_settings()
 
         dice.roll_completed.connect(multipliers.on_roll_completed)
+        characterSheet.character_changed.connect(multipliers.update_mods)
 
          # Right side splits
         right_side = QSplitter(Qt.Orientation.Vertical)
@@ -64,7 +66,7 @@ class MainWindow(QMainWindow):
         right_side.setSizes([600, 600])
 
         main_view = QSplitter(Qt.Orientation.Horizontal)
-        main_view.addWidget(sidebar)
+        main_view.addWidget(self.sidebar)
         main_view.addWidget(characterSheet)
         main_view.addWidget(right_side)
         main_view.setSizes([85, 400, 600])
@@ -74,11 +76,25 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         d = self.dice.dice 
         settings = {
-            "dice_type":   d.dice_type,
-            "body_color":  d.body_color.name(),
-            "edge_color":  d.edge_color.name(),
-            "num_color":   d.num_color.name(),
+            "dice_type":     d.dice_type,
+            "body_color":    d.body_color.name(),
+            "edge_color":    d.edge_color.name(),
+            "num_color":     d.num_color.name(),
             "show_triangle": d.show_triangle,
+            "characters": [
+                {
+                    "name":         c.name,
+                    "clas":         c.clas,
+                    "race":         c.race,
+                    "strength":     c.strength,
+                    "dexterity":    c.dexterity,
+                    "constitution": c.constitution,
+                    "intel":        c.intel,
+                    "wisdom":       c.wisdom,
+                }
+                for c in views.char_list
+            ],
+            "current_char_index": views.char_list.index(views.current_char) if views.current_char in views.char_list else -1,
         }
         with open("settings.json", "w") as f:
             json.dump(settings, f, indent=2)
@@ -96,12 +112,48 @@ class MainWindow(QMainWindow):
             self.dice.apply_accent(color)
             self.characterSheet.apply_accent(color)
             self.multipliers.apply_accent(color)
-        if "edge_color"  in s: d.set_edge_color(QColor(s["edge_color"]))
-        if "num_color"   in s: d.set_num_color(QColor(s["num_color"]))
+        if "edge_color"    in s: d.set_edge_color(QColor(s["edge_color"]))
+        if "num_color"     in s: d.set_num_color(QColor(s["num_color"]))
         if "show_triangle" in s: d.set_show_triangle(s["show_triangle"])
-        if "dice_type"   in s:
+        if "dice_type"     in s:
             d.set_dice(s["dice_type"])
             self.dice.dice_select.setCurrentText(f"d{s['dice_type']}")
+ 
+        # Restore saved characters
+        if "characters" in s:
+            scroll = self.sidebar.findChild(QScrollArea)
+            character_layout = scroll.widget().layout()
+ 
+            for char_data in s["characters"]:
+                obj = Character()
+                obj.name         = char_data["name"]
+                obj.clas         = char_data["clas"]
+                obj.race         = char_data["race"]
+                obj.strength     = int(char_data["strength"])
+                obj.dexterity    = int(char_data["dexterity"])
+                obj.constitution = int(char_data["constitution"])
+                obj.intel        = int(char_data["intel"])
+                obj.wisdom       = int(char_data["wisdom"])
+                obj.is_set       = True
+                views.char_list.append(obj)
+ 
+                index = len(views.char_list) - 1
+                new_char_btn = QPushButton(obj.name[:4])
+                new_char_btn.setFixedWidth(50)
+                new_char_btn.clicked.connect(lambda _, i=index: self.sidebar.set_display(i))
+                new_char_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+                new_char_btn.customContextMenuRequested.connect(
+                    lambda pos, i=index, btn=new_char_btn: self.sidebar.open_context_menu(pos, i, btn)
+                )
+                views.button_list.append(new_char_btn)
+                insert_index = character_layout.count() - 1
+                character_layout.insertWidget(insert_index - 1, new_char_btn)
+ 
+            # Restore active character
+            idx = s.get("current_char_index", -1)
+            if 0 <= idx < len(views.char_list):
+                self.sidebar.set_display(idx)
+
     
     
 

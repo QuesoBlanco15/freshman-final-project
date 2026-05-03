@@ -182,6 +182,7 @@ class SidebarView(QWidget):
         # Add Import Sheet (?) 
         # Lokey don't know what else
 class CharacterSheetView(QFrame):
+    character_changed = pyqtSignal(object)
     def __init__(self, parent=None):
         super().__init__(parent)
         global current_char
@@ -228,6 +229,7 @@ class CharacterSheetView(QFrame):
             self.con_label.setText("")
             self.int_label.setText("")
             self.wis_label.setText("")
+            self.character_changed.emit(None)
             return
         self.name_label.setText(current_char.name)
         self.class_label.setText(current_char.clas)
@@ -237,6 +239,7 @@ class CharacterSheetView(QFrame):
         self.con_label.setText(str(current_char.constitution))
         self.int_label.setText(str(current_char.intel))
         self.wis_label.setText(str(current_char.wisdom))
+        self.character_changed.emit(current_char)
     
     def apply_accent(self, color: QColor):
         self.setStyleSheet(f"""
@@ -407,36 +410,79 @@ class MultiplierView(QFrame):
         ]
 
         self.result_labels = []
+        self.mod_labels = []
+        self._stat_keys = [key for _, key in stats]
 
+        _d = Dice()
+        self._current_mods = {key: _d.print_mod(key) for key in self._stat_keys}
+ 
         for row, (label_text, key) in enumerate(stats, start=1):
-            bg = "background: rgba(255,255,255,0.03);" if row % 2 == 0 else ""
-
             name_lbl = QLabel(label_text)
-            name_lbl.setStyleSheet(bg)
-
-            mod_val = die.print_mod(key)
+ 
+            mod_val = self._current_mods[key]
             mod_sign = "+" if mod_val >= 0 else ""
             mod_lbl = QLabel(f"{mod_sign}{mod_val}")
             mod_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            mod_lbl.setStyleSheet(f"color: #6dbf6d; font-weight: bold; {bg}")
-
+            mod_lbl.setStyleSheet(f"color: #6dbf6d; font-weight: bold;")
+            self.mod_labels.append((key, mod_lbl))
+ 
             result_lbl = QLabel("—")
             result_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
             result_lbl.setFont(QFont("Inter", 12, QFont.Weight.Bold))
-            result_lbl.setStyleSheet(f"color: #e0c080; {bg}")
+            result_lbl.setStyleSheet(f"color: #ffffff;")
             self.result_labels.append(result_lbl)
-
+ 
             grid.addWidget(name_lbl,   row, 0)
             grid.addWidget(mod_lbl,    row, 1)
             grid.addWidget(result_lbl, row, 2)
-
+ 
+        
+ 
         outer.addLayout(grid)
         outer.addStretch()
-
-    def on_roll_completed(self, total: int):
-        for label in self.result_labels:
-            label.setText(str(total))
-
+ 
+    def update_mods(self, character):
+        """Called when the active character changes. Recalculates all mods."""
+        _d = Dice()
+        if character is None:
+            # Reset to zero mods when no character selected
+            for key in self._stat_keys:
+                self._current_mods[key] = 0
+        else:
+            stat_map = {
+                "str":  character.strength,
+                "dex":  character.dexterity,
+                "con":  character.constitution,
+                "int":  character.intel,
+                "wis":  character.wisdom,
+                "char": 0,  # not on Character yet; stays 0
+            }
+            for key, stat_val in stat_map.items():
+                clamped = max(1, min(int(stat_val or 0), 20))
+                result = _d.mod(clamped)
+                self._current_mods[key] = result if result is not None else 0
+        # Refresh mod labels
+        for key, lbl in self.mod_labels:
+            val = self._current_mods[key]
+            sign = "+" if val >= 0 else ""
+            lbl.setText(f"{sign}{val}")
+ 
+        # Clear roll column since character changed
+        for lbl in self.result_labels:
+            lbl.setText("—")
+ 
+    def on_roll_completed(self, raw: int):
+        """Shows raw+mod for each stat in the Roll column, and the sum in Total."""
+        running_total = 0
+        for i, result_lbl in enumerate(self.result_labels):
+            key = self._stat_keys[i]
+            mod = self._current_mods[key]
+            val = raw + mod
+            running_total += val
+            sign = "+" if mod >= 0 else ""
+            result_lbl.setText(f"{val}")
+        
+ 
     def _apply_style(self, color):
         self.setStyleSheet(f"""
             MultiplierView {{
@@ -444,6 +490,6 @@ class MultiplierView(QFrame):
                 border-radius: 4px;
             }}
         """)
-
+ 
     def apply_accent(self, color: QColor):
         self._apply_style(color.name())
