@@ -1,0 +1,20 @@
+{
+  "dice_type": 20,
+  "body_color": "#4b1414",
+  "edge_color": "#d2643c",
+  "num_color": "#ffc8aa",
+  "show_triangle": true,
+  "characters": [
+    {
+      "name": "Cole",
+      "clas": "Fart",
+      "race": "Jew",
+      "strength": "20",
+      "dexterity": "15",
+      "constitution": "13",
+      "intel": "20",
+      "wisdom": "5"
+    }
+  ],
+  "current_char_index": 0
+}
