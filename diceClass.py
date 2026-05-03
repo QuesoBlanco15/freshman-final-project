@@ -12,10 +12,10 @@ class Dice():
         self.stats = []
         self.stats_mod = []
         self.str_mod = 0
-        self.dex_mod = 3
-        self.con_mod = 2
-        self.int_mod = 5
-        self.wis_mod = 1
+        self.dex_mod = 0
+        self.con_mod = 0
+        self.int_mod = 0
+        self.wis_mod = 0
         self.char_mod = 0
 
     # Strength modifier
