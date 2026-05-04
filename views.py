@@ -189,6 +189,55 @@ class SidebarView(QWidget):
         self._style_btn(self._active_btn, active=True)
 
         self.character_sheet.update_display()
+    #creates and adds edit and delete to the context menu
+    def open_context_menu(self,pos,index,btn):
+        menu = QMenu(self)
+        edit = QAction("Edit Character",self)
+        menu.addAction(edit)
+        edit.triggered.connect(lambda _, idx=index:self.edit_character(idx))
+        delete = QAction("Delete Character",self)
+        menu.addAction(delete)
+        delete.triggered.connect(lambda _, idx=index, b=btn: self.delete_character(idx, b))
+        menu.exec(btn.mapToGlobal(pos))
+
+    #editing the character
+    def edit_character(self,index):
+        global char_list, button_list, current_char
+        
+        char = char_list[index]
+        
+        dialog = CharacterCreationDialog()
+        
+        
+        
+        dialog.setWindowTitle("Edit Character")
+        dialog.name_input.setText(char.name)
+        dialog.class_input.setText(char.clas)
+        dialog.race_input.setText(char.race)
+        dialog.strength_input.setText(str(char.strength))
+        dialog.dexterity_input.setText(str(char.dexterity))
+        dialog.constitution_input.setText(str(char.constitution))
+        dialog.intel_input.setText(str(char.intel))
+        dialog.wisdom_input.setText(str(char.wisdom))
+        
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+        
+        data = dialog.get_data()
+        char.name = data["name"]
+        char.clas = data["clas"]
+        char.race = data["race"]
+        char.strength = int(data["strength"])
+        char.dexterity = int(data["dexterity"])
+        char.constitution = int(data["constitution"])
+        char.intel = int(data["intel"])
+        char.wisdom = int(data["wisdom"])
+
+        button_list[index].setText(char.name[:4])
+
+
+        if current_char == char:
+            self.character_sheet.update_display()
     #context menu delete function
     def delete_character(self, index, btn):
         global char_list, button_list, current_char
