@@ -204,13 +204,11 @@ class CharacterSheetView(QFrame):
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(4)
  
-        # ── Name ──────────────────────────────────────────────────────
         self.name_label = QLabel("No character selected")
         self.name_label.setFont(QFont("Inter", 22, QFont.Weight.Bold))
         self.name_label.setStyleSheet("color: #ffffff;")
         self.name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
  
-        # ── Class · Race ──────────────────────────────────────────────
         identity_row = QHBoxLayout()
         identity_row.setSpacing(6)
  
@@ -238,7 +236,6 @@ class CharacterSheetView(QFrame):
         self.layout.addLayout(identity_row)
         self.layout.addSpacing(16)
  
-        # ── Stats grid ────────────────────────────────────────────────
         grid = QGridLayout()
         grid.setColumnStretch(0, 3)
         grid.setColumnStretch(1, 1)
@@ -271,7 +268,6 @@ class CharacterSheetView(QFrame):
         self.layout.addLayout(grid)
         self.layout.addSpacing(16)
  
-        # ── Lore ──────────────────────────────────────────────────────
         self.lore_label = QLabel("LORE")
         self.lore_label.setFont(QFont("Inter", 9, QFont.Weight.Bold))
         self.lore_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
