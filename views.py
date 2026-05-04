@@ -33,7 +33,7 @@ class SidebarView(QWidget):
                 border-right: 1px solid #2a2a2a;
             }
         """)
-
+        
         sidebar_layout = QVBoxLayout(self)
         sidebar_layout.setContentsMargins(0, 12, 0, 12)
         sidebar_layout.setSpacing(0)
@@ -141,7 +141,9 @@ class SidebarView(QWidget):
                         border-radius: 20px;
                     }
                 """)
-
+    #creates a character and the button and attaches the character to the button
+    #context menu also made
+    #see below to see context menu functions
     def add_new_character(self, character_layout):
         global button_list, char_list, current_char
 
@@ -175,7 +177,7 @@ class SidebarView(QWidget):
         # insert before the stretch at the end
         insert_index = character_layout.count() - 1
         character_layout.insertWidget(insert_index, new_char_btn, alignment=Qt.AlignmentFlag.AlignHCenter)
-
+    #sets the display as the current button
     def set_display(self, count):
         global current_char, char_list
         current_char = char_list[count]
@@ -187,7 +189,7 @@ class SidebarView(QWidget):
         self._style_btn(self._active_btn, active=True)
 
         self.character_sheet.update_display()
-
+    #context menu delete function
     def delete_character(self, index, btn):
         global char_list, button_list, current_char
         deleted_char = char_list[index]
@@ -202,7 +204,7 @@ class SidebarView(QWidget):
         if len(char_list) == 0 and current_char == deleted_char:
             current_char = None
             self.character_sheet.update_display()
-
+        #attaching a new index to the button and other buttons when a character is deleted
         for i, butn in enumerate(button_list):
             butn.clicked.disconnect()
             butn.clicked.connect(lambda _, idx=i: self.set_display(idx))
@@ -490,8 +492,9 @@ class CharacterCreationDialog(QDialog):
         color: white;
     }
                            """)
+        
         self.setWindowTitle("Character Creation")
-
+        #creates the widgets
         layout = QFormLayout()
         self.setLayout(layout)
         self.name_input = QLineEdit()
@@ -507,7 +510,7 @@ class CharacterCreationDialog(QDialog):
         self.lore_input.setPlaceholderText("Backstory / lore (optional)")
         self.lore_input.setFixedHeight(80)
         
-
+        #adds the promts to collect the data to the layout
         layout.addRow("Please enter your name:", self.name_input)
         layout.addRow("Please enter your class:", self.class_input)
         layout.addRow("Please enter your Race:", self.race_input)
@@ -536,7 +539,7 @@ class CharacterCreationDialog(QDialog):
             "wisdom":self.wisdom_input.text(),
             "charisma":self.charisma_input.text(),
             "lore": self.lore_input.toPlainText()}
-    
+    #redefines the accept function to only allow positive or whole numbers
     def accept(self):
         
         int_fields = {
