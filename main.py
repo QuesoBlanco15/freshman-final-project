@@ -91,6 +91,7 @@ class MainWindow(QMainWindow):
                     "constitution": c.constitution,
                     "intel":        c.intel,
                     "wisdom":       c.wisdom,
+                    "char":         c.charisma,
                     "lore":         c.lore,
                     "notes":        c.notes,
                 }
@@ -136,6 +137,7 @@ class MainWindow(QMainWindow):
                 obj.constitution = int(char_data["constitution"])
                 obj.intel        = int(char_data["intel"])
                 obj.wisdom       = int(char_data["wisdom"])
+                obj.charisma     = int(char_data["char"])
                 obj.lore         = char_data.get("lore", "")
                 obj.notes        = char_data.get("notes", "")
                 obj.is_set       = True
