@@ -211,16 +211,6 @@ class SidebarView(QWidget):
                 lambda pos, idx=i, b=butn: self.open_context_menu(pos, idx, b)
             )
 
-            
-    #sets the display of the character sheet to the selected character
-    def set_display(self,count):
-        global current_char
-        global char_list
-        current_char = char_list[count]
-
-
-        self.character_sheet.update_display()
-
     # Open settings window
     def show_settings(self, checked):
         self.w = SettingsView()
@@ -581,7 +571,8 @@ class DiceView(QFrame):
 
         # init dice widget
         self.dice = DiceWidget(self)
-
+        
+        # Dice select drop box
         self.dice_select = QComboBox(self)
         self.dice_select.addItems(["d4", "d6", "d8", "d10", "d12", "d20"])
         self.dice_select.setCurrentText("d20")
@@ -590,10 +581,12 @@ class DiceView(QFrame):
         )
         self.dice.roll_completed.connect(self.roll_completed)
 
+        # Add everything to the view
         panel_layout = QVBoxLayout(self)
         panel_layout.addWidget(self.dice)
         panel_layout.addWidget(self.dice_select)
 
+    # Rolls a dice
     def diceroll(self):
         global die
         die = Dice(self.die_type)
@@ -601,6 +594,7 @@ class DiceView(QFrame):
         roll = str(die.roll_dice("str"))
         self.button.setText(roll)
 
+    # Applies the current Primary color to the frame
     def apply_accent(self, color: QColor):
         self.setStyleSheet(f"""
             DiceView {{
@@ -619,11 +613,13 @@ class DiceView(QFrame):
 class MultiplierView(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
+        # set basic style
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
         self._apply_style("#4B1414")
 
         outer = QVBoxLayout(self)
 
+        # Modifier label
         title = QLabel("Modifiers")
         title.setFont(QFont("Georgia", 18, QFont.Weight.Bold))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -635,6 +631,7 @@ class MultiplierView(QFrame):
         grid.setColumnStretch(1, 1)
         grid.setColumnStretch(2, 1)
 
+        # Column headers
         for col, text in enumerate(["Stat", "Mod", "Roll"]):
             lbl = QLabel(text)
             lbl.setFont(QFont("Georgia", 10, QFont.Weight.Bold))
@@ -642,6 +639,7 @@ class MultiplierView(QFrame):
             lbl.setStyleSheet("color: #aaa; border-bottom: 1px solid #4B1414;")
             grid.addWidget(lbl, 0, col)
 
+        # Stat key
         stats = [
             ("Strength",     "str"),
             ("Dexterity",    "dex"),
@@ -657,7 +655,8 @@ class MultiplierView(QFrame):
 
         _d = Dice()
         self._current_mods = {key: _d.print_mod(key) for key in self._stat_keys}
- 
+
+        # Populates the rows based on the key
         for row, (label_text, key) in enumerate(stats, start=1):
             name_lbl = QLabel(label_text)
  
@@ -679,10 +678,11 @@ class MultiplierView(QFrame):
             grid.addWidget(result_lbl, row, 2)
  
         
- 
+        # Add to layout and stretch to fill the 
         outer.addLayout(grid)
         outer.addStretch()
- 
+    
+    # Update the mods based on the character sheet
     def update_mods(self, character):
         """Called when the active character changes. Recalculates all mods."""
         _d = Dice()
@@ -712,7 +712,8 @@ class MultiplierView(QFrame):
         # Clear roll column since character changed
         for lbl in self.result_labels:
             lbl.setText("—")
- 
+    
+    # Update result when roll is completed
     def on_roll_completed(self, raw: int):
         """Shows raw+mod for each stat in the Roll column, and the sum in Total."""
         running_total = 0
@@ -724,7 +725,7 @@ class MultiplierView(QFrame):
             sign = "+" if mod >= 0 else ""
             result_lbl.setText(f"{val}")
         
- 
+    # Applies the current primary color to the frame.
     def _apply_style(self, color):
         self.setStyleSheet(f"""
             MultiplierView {{
@@ -732,6 +733,7 @@ class MultiplierView(QFrame):
                 border-radius: 4px;
             }}
         """)
- 
+    
+    # Runs the _apply_style function
     def apply_accent(self, color: QColor):
         self._apply_style(color.name())
