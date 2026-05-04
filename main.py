@@ -11,7 +11,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
  
-        # Background
+        # Linear Background Style
         self.setStyleSheet("""
                             QMainWindow {
         background: qlineargradient(
@@ -22,8 +22,7 @@ class MainWindow(QMainWindow):
     }
                            """)
  
-        self.setWindowTitle("John DnD")
-
+        self.setWindowTitle("John D&D")
         self._campaign_name = ""
  
         # Set the central widget of the Window.
@@ -33,7 +32,8 @@ class MainWindow(QMainWindow):
  
         # Dice View
         dice = DiceView()
- 
+
+        # function to latch on to signals from settings_view
         def on_settings_opened(settings_view: SettingsView):
             settings_view.dice_body_color_changed.connect(dice.dice.set_body_color)
             settings_view.dice_edge_color_changed.connect(dice.dice.set_edge_color)
@@ -55,13 +55,17 @@ class MainWindow(QMainWindow):
         self.sidebar = SidebarView(characterSheet, on_open_settings=on_settings_opened)
         self.characterSheet = characterSheet
  
-        # Dice Multipliers/stats view (?)
+        # Dice Multipliers/stats view 
         multipliers = MultiplierView()
         self.multipliers = multipliers
- 
+
+        # init dice class for some functions
         self.dice = dice
+
+        # load settings on launch
         self._load_settings()
  
+        # Connections to change multiplier view on roll and when character sheet updates
         dice.roll_completed.connect(multipliers.on_roll_completed)
         characterSheet.character_changed.connect(multipliers.update_mods)
  
@@ -70,7 +74,8 @@ class MainWindow(QMainWindow):
         right_side.addWidget(dice)
         right_side.addWidget(multipliers)
         right_side.setSizes([600, 600])
- 
+
+        # Main splits
         main_view = QSplitter(Qt.Orientation.Horizontal)
         main_view.addWidget(self.sidebar)
         main_view.addWidget(characterSheet)
@@ -79,13 +84,15 @@ class MainWindow(QMainWindow):
  
         layout.addWidget(main_view)
 
+    # Script to update the window title with the name of the Campaign
     def _update_title(self, name: str):
         self._campaign_name = name.strip()
         if name.strip():
             self.setWindowTitle(f"John DnD — {name.strip()}")
         else:
-            self.setWindowTitle("John DnD")
+            self.setWindowTitle("John D&D")
     
+    # A script that runs on closing of the application, saves the state of the window as JSON
     def closeEvent(self, event):
         d = self.dice.dice 
         settings = {
@@ -117,6 +124,7 @@ class MainWindow(QMainWindow):
             json.dump(settings, f, indent=2)
         event.accept()
     
+    # Loads the settings upon opening and loads the settings into the widgets/views
     def _load_settings(self):
         if not os.path.exists("settings.json"):
             return
@@ -171,9 +179,11 @@ class MainWindow(QMainWindow):
             if 0 <= idx < len(views.char_list):
                 self.sidebar.set_display(idx)
 
+            # Restore campaign name
             if "campaign_name" in s and s["campaign_name"]:
                 self._update_title(s["campaign_name"])
 
+            # Restore Colors
             if "body_color" in s:
                 color = QColor(s["body_color"])
                 d.set_body_color(color)
@@ -185,10 +195,12 @@ class MainWindow(QMainWindow):
     
     
  
- 
+# init the app
 app = QApplication(sys.argv)
  
+# init mainwindow in the app and make maximized size
 window = MainWindow()
 window.showMaximized()
- 
+
+# launch app
 app.exec()

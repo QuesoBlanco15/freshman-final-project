@@ -12,13 +12,11 @@ current_char = None
 button_list = []
 char_list = []
 
+#############################################
 # Sidebar View
-    # TO DO
-        # Add Settings
-        # Add Characters
-    #added by Andre:
-        # a character selection/creation/deletion that will be inside of the sidebar
-        # A widget that adds a new Character to the bar if clicked
+# The sidebar view + functions for adding/deleting/editing characters.
+# Written by Andre
+#############################################
 roll = 0     
 die = Dice()
 class SidebarView(QWidget):
@@ -223,12 +221,14 @@ class SidebarView(QWidget):
 
         self.character_sheet.update_display()
 
+    # Open settings window
     def show_settings(self, checked):
         self.w = SettingsView()
         self.w.show()
         if self._on_open_settings:
             self._on_open_settings(self.w)
 
+    # Applies current Primary color as border window.
     def apply_accent(self, color: QColor):
         self.setStyleSheet(f"""
             SidebarView {{
@@ -236,11 +236,12 @@ class SidebarView(QWidget):
                 border-right: 1px solid #2a2a2a;
             }}
         """)
-        # Rebuild btn styles using the new accent color
+        # Rebuild button styles using the new accent color
         darker = color.darker(150).name()
         lighter = color.lighter(130).name()
         border = color.darker(120).name()
 
+        # When character is selected
         active_style = f"""
             QPushButton {{
                 background-color: {darker};
@@ -249,6 +250,7 @@ class SidebarView(QWidget):
                 border-radius: 20px;
             }}
         """
+        # When character is not selected
         inactive_style = f"""
             QPushButton {{
                 background-color: #2a1a1a;
@@ -258,21 +260,22 @@ class SidebarView(QWidget):
             }}
         """
 
+        # go through each button and set the style.
         for i, btn in enumerate(button_list):
             if btn == self._active_btn:
                 btn.setStyleSheet(active_style)
             else:
                 btn.setStyleSheet(inactive_style)
 
-        # Store so _style_btn stays in sync for future buttons
+        # Store so it stays in sync for future buttons
         self._active_style = active_style
         self._inactive_style = inactive_style
 
+#############################################
 # Character Sheet View
-    # TO DO
-        # Add ability to change with change of character
-        # Add Import Sheet (?) 
-        # Lokey don't know what else
+# The character sheet class + some funcs to update said class.
+# Written by Andre
+#############################################
 class CharacterSheetView(QFrame):
     character_changed = pyqtSignal(object)
     def __init__(self, parent=None):
@@ -285,33 +288,39 @@ class CharacterSheetView(QFrame):
                 border-radius: 4px;
             }
         """)
- 
+        
+        # Set Layout
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(20, 20, 20, 20)
         self.layout.setSpacing(4)
- 
+
+        # Character name label (init as "No character" at first)
         self.name_label = QLabel("No character selected")
         self.name_label.setFont(QFont("Georgia", 22, QFont.Weight.Bold))
         self.name_label.setStyleSheet("color: #ffffff;")
         self.name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
- 
+
         identity_row = QHBoxLayout()
         identity_row.setSpacing(6)
- 
+
+        # Class label (init as blank at first)
         self.class_label = QLabel("")
         self.class_label.setFont(QFont("Georgia", 11))
         self.class_label.setStyleSheet("color: #888888;")
         self.class_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
- 
+        
+        # Decorator dot
         dot = QLabel("·")
         dot.setStyleSheet("color: #444;")
         dot.setAlignment(Qt.AlignmentFlag.AlignCenter)
  
+        # Race Label (init as blank at first)
         self.race_label = QLabel("")
         self.race_label.setFont(QFont("Georgia", 11))
         self.race_label.setStyleSheet("color: #888888;")
         self.race_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
- 
+
+        # Stretch the length of the view
         identity_row.addStretch()
         identity_row.addWidget(self.class_label)
         identity_row.addWidget(dot)
@@ -321,13 +330,15 @@ class CharacterSheetView(QFrame):
         self.layout.addWidget(self.name_label)
         self.layout.addLayout(identity_row)
         self.layout.addSpacing(16)
- 
+
+        # Grid setup for stats
         grid = QGridLayout()
         grid.setColumnStretch(0, 3)
         grid.setColumnStretch(1, 1)
         grid.setHorizontalSpacing(12)
         grid.setVerticalSpacing(10)
  
+        # stat list
         stat_defs = [
             ("Strength",     "str_label"),
             ("Dexterity",    "dex_label"),
@@ -336,7 +347,8 @@ class CharacterSheetView(QFrame):
             ("Wisdom",       "wis_label"),
             ("Charisma",     "charisma_label"),
         ]
- 
+
+        # Create each stat and display the initial stat
         for row, (display, attr) in enumerate(stat_defs):
             name_lbl = QLabel(display)
             name_lbl.setFont(QFont("Georgia", 11))
@@ -350,16 +362,19 @@ class CharacterSheetView(QFrame):
             setattr(self, attr, val_lbl)
             grid.addWidget(name_lbl, row, 0)
             grid.addWidget(val_lbl,  row, 1)
- 
+
+        # Add stats to layout
         self.layout.addLayout(grid)
         self.layout.addSpacing(16)
- 
+
+        # Lore label
         self.lore_label = QLabel("LORE")
         self.lore_label.setFont(QFont("Georgia", 9, QFont.Weight.Bold))
         self.lore_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
  
+        # Lore Text box
         self.lore_edit = QTextEdit()
-        self.lore_edit.setPlaceholderText("Character backstory, history, personality...")
+        self.lore_edit.setPlaceholderText("Character backstory, history, personality...") # Hint text
         self.lore_edit.setStyleSheet("""
             QTextEdit {
                 background-color: #1a1a1a;
@@ -371,12 +386,14 @@ class CharacterSheetView(QFrame):
                 font-size: 12px;
             }
         """)
-        self.lore_edit.textChanged.connect(self._save_lore)
+        self.lore_edit.textChanged.connect(self._save_lore) # connect to save signal
  
+        # Notes Label
         self.notes_label = QLabel("NOTES")
         self.notes_label.setFont(QFont("Georgia", 9, QFont.Weight.Bold))
         self.notes_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
  
+        # Notes text box
         self.notes_edit = QTextEdit()
         self.notes_edit.setPlaceholderText("Session notes, inventory, reminders...")
         self.notes_edit.setStyleSheet("""
@@ -391,7 +408,8 @@ class CharacterSheetView(QFrame):
             }
         """)
         self.notes_edit.textChanged.connect(self._save_notes)
- 
+
+        # Add lore and notes to the layout
         self.layout.addWidget(self.lore_label)
         self.layout.addWidget(self.lore_edit, stretch=1)
         self.layout.addWidget(self.notes_label)
@@ -401,6 +419,7 @@ class CharacterSheetView(QFrame):
     #updates the display to the selected character
     def update_display(self):
         global current_char
+        # If no current character
         if current_char is None:
             self.name_label.setText("No character selected")
             self.class_label.setText("")
@@ -419,6 +438,7 @@ class CharacterSheetView(QFrame):
             self.notes_edit.blockSignals(False)
             self.character_changed.emit(None)
             return
+        # If there is a current character
         self.name_label.setText(current_char.name)
         self.class_label.setText(current_char.clas)
         self.race_label.setText(current_char.race)
@@ -435,17 +455,20 @@ class CharacterSheetView(QFrame):
         self.notes_edit.setPlainText(current_char.notes or "")
         self.notes_edit.blockSignals(False)
         self.character_changed.emit(current_char)
- 
+    
+    # Save lore when typed
     def _save_lore(self):
         global current_char
         if current_char is not None:
             current_char.lore = self.lore_edit.toPlainText()
  
+    # Save notes when typed
     def _save_notes(self):
         global current_char
         if current_char is not None:
             current_char.notes = self.notes_edit.toPlainText()
     
+    # Apply the primary color as a nice little border
     def apply_accent(self, color: QColor):
         self.setStyleSheet(f"""
             CharacterSheetView {{
@@ -454,8 +477,6 @@ class CharacterSheetView(QFrame):
             }}
         """)
 
-
-        
 #a pop up window to collect the data for the players characters
 class CharacterCreationDialog(QDialog):
     def __init__(self):
@@ -539,12 +560,13 @@ class CharacterCreationDialog(QDialog):
                 return
         super().accept()
 
+#############################################
 # Dice View
-    # TO DO
-        # Add Multiple Dice (d20, d12, d10, d8, d4)
-        # Add Drag to roll maybe
-        # Add Awesome Animations
+# Inits the Dice widget and has selectors to change dice type.
+# Written by Cayson
+#############################################
 class DiceView(QFrame):
+    # Signal sent out carrying the total dice roll
     roll_completed = pyqtSignal(int)
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -557,7 +579,7 @@ class DiceView(QFrame):
             }}
         """)
 
-    
+        # init dice widget
         self.dice = DiceWidget(self)
 
         self.dice_select = QComboBox(self)
@@ -589,7 +611,11 @@ class DiceView(QFrame):
 
         
 
+#############################################
 # Multiplier View
+# Quick multiplier calculator to see stat calculations at a glance.
+# Written by Cayson
+#############################################
 class MultiplierView(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
