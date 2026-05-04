@@ -252,7 +252,7 @@ class DiceWidget(QWidget):
 
 def section_label(text: str) -> QLabel:
     label = QLabel(text.upper())
-    label.setFont(QFont("Inter", 9, QFont.Weight.Bold))
+    label.setFont(QFont("Georgia", 9, QFont.Weight.Bold))
     label.setStyleSheet("color: #888; letter-spacing: 1.5px; margin-top: 8px;")
     return label
 
@@ -270,12 +270,12 @@ class RowWidget(QWidget):
 
         text_col = QVBoxLayout()
         title_label = QLabel(title)
-        title_label.setFont(QFont("Inter", 11, QFont.Weight.Medium))
+        title_label.setFont(QFont("Georgia", 11, QFont.Weight.Medium))
         text_col.addWidget(title_label)
 
         if desc:
             desc_label = QLabel(desc)
-            desc_label.setFont(QFont("Inter", 9))  # FIX 2: was setFont("Inter", 9)
+            desc_label.setFont(QFont("Georgia", 9))  # FIX 2: was setFont("Inter", 9)
             desc_label.setStyleSheet("color: #888;")
             text_col.addWidget(desc_label)
 
@@ -374,55 +374,6 @@ class SectionCard(QWidget):
             if i < len(rows) - 1:
                 layout.addWidget(divider())
 
-class NavWidget(QWidget):
-    section_clicked = pyqtSignal(str)
-
-    SECTIONS = ["General", "Customization", "About"]
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setStyleSheet("""
-            FloatingNav {
-                background: #1a1a1a;
-                border: 0.5px solid #2e2e2e;
-                border-radius: 10px;
-            }
-        """)
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 6, 8, 6)
-        layout.setSpacing(4)
-
-        self._buttons: dict[str, QPushButton] = {}
-        for name in self.SECTIONS:
-            btn = QPushButton(name)
-            btn.setFont(QFont("Inter", 10))
-            btn.setCheckable(True)
-            btn.clicked.connect(lambda _, n=name: self._on_click(n))
-            btn.setStyleSheet("""
-                QPushButton {
-                    background: transparent; color: #888;
-                    border: none; border-radius: 6px;
-                    padding: 5px 14px;
-                }
-                QPushButton:checked {
-                    background: #1d3a5c; color: #5aabff;
-                }
-                QPushButton:hover:!checked { background: #222; color: #ccc; }
-            """)
-            self._buttons[name] = btn
-            layout.addWidget(btn)
-
-        self._buttons["General"].setChecked(True)
-
-    def _on_click(self, name: str):
-        for n, b in self._buttons.items():
-            b.setChecked(n == name)
-        self.section_clicked.emit(name)
-
-    def set_active(self, name: str):
-        for n, b in self._buttons.items():
-            b.setChecked(n == name)
-
 class SettingsView(QWidget):
     dice_body_color_changed = pyqtSignal(QColor)
     dice_edge_color_changed = pyqtSignal(QColor)
@@ -447,9 +398,10 @@ class SettingsView(QWidget):
         root.setContentsMargins(20, 20, 20, 20)
         root.setSpacing(12)
 
-        self.nav = NavWidget()
-        self.nav.setFixedHeight(42)
-        root.addWidget(self.nav)
+        header = QLabel("Settings")
+        header.setFont(QFont("Georgia", 18, QFont.Weight.Bold))
+        header.setStyleSheet("color: #e8e8e8; padding-bottom: 4px;")
+        root.addWidget(header)
 
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
@@ -477,7 +429,6 @@ class SettingsView(QWidget):
         self.scroll.setWidget(content)
         root.addWidget(self.scroll)
 
-        self.nav.section_clicked.connect(self._scroll_to)
 
     def _add_section(self, name: str, label_widget: QLabel, card: SectionCard):
         wrapper = QWidget()
@@ -532,10 +483,10 @@ class SettingsView(QWidget):
 
         label_col = QVBoxLayout()
         tl = QLabel("Theme")
-        tl.setFont(QFont("Inter", 11, QFont.Weight.Medium))
+        tl.setFont(QFont("Georgia", 11, QFont.Weight.Medium))
         tl.setStyleSheet("color: #e8e8e8;")
         td = QLabel("Pick a preset colour scheme")
-        td.setFont(QFont("Inter", 9))
+        td.setFont(QFont("Georgia", 9))
         td.setStyleSheet("color: #888;")
         label_col.addWidget(tl)
         label_col.addWidget(td)
@@ -548,7 +499,7 @@ class SettingsView(QWidget):
         for name, (body, edge, _num) in self.THEMES.items():
             btn = QPushButton(name)
             btn.setCheckable(True)
-            btn.setFont(QFont("Inter", 10))
+            btn.setFont(QFont("Georgia", 10))
             btn.setFixedHeight(30)
             btn.setStyleSheet(self._theme_btn_style(body, edge, checked=name == "Crimson"))
             btn.clicked.connect(lambda _, n=name: self._apply_theme(n))
@@ -558,7 +509,7 @@ class SettingsView(QWidget):
 
         self._advanced_visible = False
         adv_toggle = QPushButton("Advanced  ▸")
-        adv_toggle.setFont(QFont("Inter", 10))
+        adv_toggle.setFont(QFont("Georgia", 10))
         adv_toggle.setStyleSheet("""
             QPushButton {
                 background: transparent; color: #666;
@@ -719,8 +670,3 @@ class SettingsView(QWidget):
         vl.addWidget(card)
         self._content_layout.addWidget(wrapper)
         self._section_widgets["About"] = wrapper
-
-    def _scroll_to(self, name: str):
-        widget = self._section_widgets.get(name)
-        if widget:
-            self.scroll.ensureWidgetVisible(widget, 0, 0)

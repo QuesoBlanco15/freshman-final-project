@@ -205,7 +205,7 @@ class CharacterSheetView(QFrame):
         self.layout.setSpacing(4)
  
         self.name_label = QLabel("No character selected")
-        self.name_label.setFont(QFont("Inter", 22, QFont.Weight.Bold))
+        self.name_label.setFont(QFont("Georgia", 22, QFont.Weight.Bold))
         self.name_label.setStyleSheet("color: #ffffff;")
         self.name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
  
@@ -213,7 +213,7 @@ class CharacterSheetView(QFrame):
         identity_row.setSpacing(6)
  
         self.class_label = QLabel("")
-        self.class_label.setFont(QFont("Inter", 11))
+        self.class_label.setFont(QFont("Georgia", 11))
         self.class_label.setStyleSheet("color: #888888;")
         self.class_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
  
@@ -222,7 +222,7 @@ class CharacterSheetView(QFrame):
         dot.setAlignment(Qt.AlignmentFlag.AlignCenter)
  
         self.race_label = QLabel("")
-        self.race_label.setFont(QFont("Inter", 11))
+        self.race_label.setFont(QFont("Georgia", 11))
         self.race_label.setStyleSheet("color: #888888;")
         self.race_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
  
@@ -253,11 +253,11 @@ class CharacterSheetView(QFrame):
  
         for row, (display, attr) in enumerate(stat_defs):
             name_lbl = QLabel(display)
-            name_lbl.setFont(QFont("Inter", 11))
+            name_lbl.setFont(QFont("Georgia", 11))
             name_lbl.setStyleSheet("color: #777777;")
  
             val_lbl = QLabel("—")
-            val_lbl.setFont(QFont("Inter", 12, QFont.Weight.Bold))
+            val_lbl.setFont(QFont("Georgia", 12, QFont.Weight.Bold))
             val_lbl.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             val_lbl.setStyleSheet("color: #dddddd;")
  
@@ -269,7 +269,7 @@ class CharacterSheetView(QFrame):
         self.layout.addSpacing(16)
  
         self.lore_label = QLabel("LORE")
-        self.lore_label.setFont(QFont("Inter", 9, QFont.Weight.Bold))
+        self.lore_label.setFont(QFont("Georgia", 9, QFont.Weight.Bold))
         self.lore_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
  
         self.lore_edit = QTextEdit()
@@ -288,7 +288,7 @@ class CharacterSheetView(QFrame):
         self.lore_edit.textChanged.connect(self._save_lore)
  
         self.notes_label = QLabel("NOTES")
-        self.notes_label.setFont(QFont("Inter", 9, QFont.Weight.Bold))
+        self.notes_label.setFont(QFont("Georgia", 9, QFont.Weight.Bold))
         self.notes_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
  
         self.notes_edit = QTextEdit()
@@ -513,7 +513,7 @@ class MultiplierView(QFrame):
         outer = QVBoxLayout(self)
 
         title = QLabel("Modifiers")
-        title.setFont(QFont("Inter", 18, QFont.Weight.Bold))
+        title.setFont(QFont("Georgia", 18, QFont.Weight.Bold))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         outer.addWidget(title)
 
@@ -525,7 +525,7 @@ class MultiplierView(QFrame):
 
         for col, text in enumerate(["Stat", "Mod", "Roll"]):
             lbl = QLabel(text)
-            lbl.setFont(QFont("Inter", 10, QFont.Weight.Bold))
+            lbl.setFont(QFont("Georgia", 10, QFont.Weight.Bold))
             lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
             lbl.setStyleSheet("color: #aaa; border-bottom: 1px solid #4B1414;")
             grid.addWidget(lbl, 0, col)
@@ -558,7 +558,7 @@ class MultiplierView(QFrame):
  
             result_lbl = QLabel("—")
             result_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            result_lbl.setFont(QFont("Inter", 12, QFont.Weight.Bold))
+            result_lbl.setFont(QFont("Georgia", 12, QFont.Weight.Bold))
             result_lbl.setStyleSheet(f"color: #ffffff;")
             self.result_labels.append(result_lbl)
  
