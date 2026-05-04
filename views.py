@@ -25,42 +25,133 @@ class SidebarView(QWidget):
     def __init__(self, character_sheet, on_open_settings=None, parent=None):
         super().__init__(parent)
         self.character_sheet = character_sheet
+        self._on_open_settings = on_open_settings
+        self._active_btn = None  # tracks the currently highlighted button
+
+        self.setFixedWidth(70)
+        self.setStyleSheet("""
+            SidebarView {
+                background-color: #111111;
+                border-right: 1px solid #2a2a2a;
+            }
+        """)
+
         sidebar_layout = QVBoxLayout(self)
-        scroll = QScrollArea() 
-        scroll.setWidgetResizable(True) 
-        character = QWidget() 
-        character_layout = QVBoxLayout(character) 
+        sidebar_layout.setContentsMargins(0, 12, 0, 12)
+        sidebar_layout.setSpacing(0)
+        sidebar_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        # Scroll area for character buttons
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setStyleSheet("background: transparent;")
+
+        character = QWidget()
+        character.setStyleSheet("background: transparent;")
+        self._character_layout = QVBoxLayout(character)
+        self._character_layout.setContentsMargins(0, 0, 0, 0)
+        self._character_layout.setSpacing(8)
+        self._character_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop)
         scroll.setWidget(character)
 
-        
+        # Add character button
+        add_char_btn = QPushButton("+")
+        add_char_btn.setFixedSize(40, 40)
+        add_char_btn.setFont(QFont("Inter", 18))
+        add_char_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        add_char_btn.setToolTip("Add character")
+        add_char_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #1e1e1e;
+                color: #555555;
+                border: 1.5px dashed #333333;
+                border-radius: 20px;
+            }
+            QPushButton:hover {
+                background-color: #2a2a2a;
+                color: #888888;
+                border-color: #555555;
+            }
+        """)
+        add_char_btn.clicked.connect(lambda: self.add_new_character(self._character_layout))
+        self._character_layout.addWidget(add_char_btn, alignment=Qt.AlignmentFlag.AlignHCenter)
+        self._character_layout.addStretch()
+
+        # Settings button
         self.settings = QPushButton()
         self.settings.setIcon(QIcon("icons/setting-lines.png"))
-        self.settings.setIconSize(QSize(25, 25))
+        self.settings.setIconSize(QSize(22, 22))
+        self.settings.setFixedSize(40, 40)
+        self.settings.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.settings.setToolTip("Settings")
+        self.settings.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border: none;
+                border-radius: 20px;
+            }
+            QPushButton:hover {
+                background-color: #1e1e1e;
+            }
+        """)
         self.settings.clicked.connect(self.show_settings)
-        self._on_open_settings = on_open_settings
-        
-
-        add_char_btn = QPushButton("add")
-        add_char_btn.setFixedWidth(50)
-        add_char_btn.clicked.connect(lambda:self.add_new_character(character_layout))
 
         sidebar_layout.addWidget(scroll)
-        sidebar_layout.addWidget(self.settings)
-        character_layout.addWidget(add_char_btn)
-        character_layout.addStretch()
+        sidebar_layout.addWidget(self.settings, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-    # centered around the add character button and gives ability to delete and edit created characters
-    def add_new_character(self,character_layout):
-        global button_list
-        global char_list
-        global current_char
+    def _make_char_btn(self, name: str) -> QPushButton:
+        """Creates a styled circular character avatar button."""
+        initials = name[:2].upper() if name else "?"
+        btn = QPushButton(initials)
+        btn.setFixedSize(40, 40)
+        btn.setFont(QFont("Inter", 13, QFont.Weight.Bold))
+        btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        btn.setToolTip(name)
+        btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self._style_btn(btn, active=False)
+        return btn
+
+    def _style_btn(self, btn: QPushButton, active: bool):
+        if active:
+            style = getattr(self, "_active_style", None)
+        else:
+            style = getattr(self, "_inactive_style", None)
+
+        if style:
+            btn.setStyleSheet(style)
+        else:
+            # fallback to hardcoded default (crimson)
+            if active:
+                btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #1e1e1e;
+                        color: #ffffff;
+                        border: 2px solid #d2643c;
+                        border-radius: 20px;
+                    }
+                    QPushButton:hover { background-color: #7d2424; }
+                """)
+            else:
+                btn.setStyleSheet("""
+                    QPushButton {
+                        background-color: #1e1e1e;
+                        color: #ffffff;
+                        border: 1.5px solid #3a2020;
+                        border-radius: 20px;
+                    }
+                """)
+
+    def add_new_character(self, character_layout):
+        global button_list, char_list, current_char
+
         dialog = CharacterCreationDialog()
-        
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         data = dialog.get_data()
-        
-        
+
         obj = Character()
         obj.name = data["name"]
         obj.clas = data["clas"]
@@ -75,95 +166,51 @@ class SidebarView(QWidget):
         obj.is_set = True
         char_list.append(obj)
 
-        
-        
         index = len(char_list) - 1
-        
-        new_char_btn = QPushButton(obj.name[:4])
-        new_char_btn.setFixedWidth(50)
+        new_char_btn = self._make_char_btn(obj.name)
         new_char_btn.clicked.connect(lambda _, i=index: self.set_display(i))
-        new_char_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         new_char_btn.customContextMenuRequested.connect(
-            lambda pos,i = index,btn = new_char_btn: self.open_context_menu(pos,i,btn)
+            lambda pos, i=index, btn=new_char_btn: self.open_context_menu(pos, i, btn)
         )
         button_list.append(new_char_btn)
 
+        # insert before the stretch at the end
         insert_index = character_layout.count() - 1
-        character_layout.insertWidget(insert_index - 1, new_char_btn)
+        character_layout.insertWidget(insert_index, new_char_btn, alignment=Qt.AlignmentFlag.AlignHCenter)
 
-    #creates and adds edit and delete to the context menu
-    def open_context_menu(self,pos,index,btn):
-        menu = QMenu(self)
-        edit = QAction("Edit Character",self)
-        menu.addAction(edit)
-        edit.triggered.connect(lambda _, idx=index:self.edit_character(idx))
-        delete = QAction("Delete Character",self)
-        menu.addAction(delete)
-        delete.triggered.connect(lambda _, idx=index, b=btn: self.delete_character(idx, b))
-        menu.exec(btn.mapToGlobal(pos))
+    def set_display(self, count):
+        global current_char, char_list
+        current_char = char_list[count]
 
-    #editing the character
-    def edit_character(self,index):
-        global char_list, button_list, current_char
-        
-        char = char_list[index]
-        
-        dialog = CharacterCreationDialog()
-        
-        
-        
-        dialog.setWindowTitle("Edit Character")
-        dialog.name_input.setText(char.name)
-        dialog.class_input.setText(char.clas)
-        dialog.race_input.setText(char.race)
-        dialog.strength_input.setText(str(char.strength))
-        dialog.dexterity_input.setText(str(char.dexterity))
-        dialog.constitution_input.setText(str(char.constitution))
-        dialog.intel_input.setText(str(char.intel))
-        dialog.wisdom_input.setText(str(char.wisdom))
-        dialog.charisma_input.setText(str(char.charisma))
-        dialog.lore_input.setPlainText(char.lore or "")
-        
-        if dialog.exec() != QDialog.DialogCode.Accepted:
-            return
-        
-        data = dialog.get_data()
-        char.name = data["name"]
-        char.clas = data["clas"]
-        char.race = data["race"]
-        char.strength = int(data["strength"])
-        char.dexterity = int(data["dexterity"])
-        char.constitution = int(data["constitution"])
-        char.intel = int(data["intel"])
-        char.wisdom = int(data["wisdom"])
-        char.charisma = int(data["charisma"])
-        char.lore = data["lore"]
+        # Update highlight
+        if self._active_btn is not None:
+            self._style_btn(self._active_btn, active=False)
+        self._active_btn = button_list[count]
+        self._style_btn(self._active_btn, active=True)
 
-        button_list[index].setText(char.name[:4])
+        self.character_sheet.update_display()
 
-
-        if current_char == char:
-            self.character_sheet.update_display()
-
-
-
-    #deleteing the character
     def delete_character(self, index, btn):
         global char_list, button_list, current_char
         deleted_char = char_list[index]
+
+        if self._active_btn == btn:
+            self._active_btn = None
+
         char_list.pop(index)
         button_list.remove(btn)
         btn.setParent(None)
 
-        if len(char_list) ==0 and current_char == deleted_char:
+        if len(char_list) == 0 and current_char == deleted_char:
             current_char = None
             self.character_sheet.update_display()
+
         for i, butn in enumerate(button_list):
             butn.clicked.disconnect()
             butn.clicked.connect(lambda _, idx=i: self.set_display(idx))
             butn.customContextMenuRequested.disconnect()
             butn.customContextMenuRequested.connect(
-                lambda pos,idx = i,btn = butn: self.open_context_menu(pos,idx,btn)
+                lambda pos, idx=i, b=butn: self.open_context_menu(pos, idx, b)
             )
 
             
@@ -181,6 +228,45 @@ class SidebarView(QWidget):
         self.w.show()
         if self._on_open_settings:
             self._on_open_settings(self.w)
+
+    def apply_accent(self, color: QColor):
+        self.setStyleSheet(f"""
+            SidebarView {{
+                background-color: #111111;
+                border-right: 1px solid #2a2a2a;
+            }}
+        """)
+        # Rebuild btn styles using the new accent color
+        darker = color.darker(150).name()
+        lighter = color.lighter(130).name()
+        border = color.darker(120).name()
+
+        active_style = f"""
+            QPushButton {{
+                background-color: {darker};
+                color: #ffffff;
+                border: 2px solid {lighter};
+                border-radius: 20px;
+            }}
+        """
+        inactive_style = f"""
+            QPushButton {{
+                background-color: #2a1a1a;
+                color: #ffffff;
+                border: 1.5px solid {border};
+                border-radius: 20px;
+            }}
+        """
+
+        for i, btn in enumerate(button_list):
+            if btn == self._active_btn:
+                btn.setStyleSheet(active_style)
+            else:
+                btn.setStyleSheet(inactive_style)
+
+        # Store so _style_btn stays in sync for future buttons
+        self._active_style = active_style
+        self._inactive_style = inactive_style
 
 # Character Sheet View
     # TO DO

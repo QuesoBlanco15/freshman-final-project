@@ -43,6 +43,7 @@ class MainWindow(QMainWindow):
             settings_view.dice_body_color_changed.connect(dice.apply_accent)
             settings_view.dice_body_color_changed.connect(characterSheet.apply_accent)
             settings_view.dice_body_color_changed.connect(multipliers.apply_accent)
+            settings_view.dice_body_color_changed.connect(self.sidebar.apply_accent)
             settings_view.campaign_input.setText(self._campaign_name)
             settings_view.campaign_name_changed.connect(self._update_title)
 
@@ -137,8 +138,7 @@ class MainWindow(QMainWindow):
  
         # Restore saved characters
         if "characters" in s:
-            scroll = self.sidebar.findChild(QScrollArea)
-            character_layout = scroll.widget().layout()
+            character_layout = self.sidebar._character_layout
  
             for char_data in s["characters"]:
                 obj = Character()
@@ -157,16 +157,14 @@ class MainWindow(QMainWindow):
                 views.char_list.append(obj)
  
                 index = len(views.char_list) - 1
-                new_char_btn = QPushButton(obj.name[:4])
-                new_char_btn.setFixedWidth(50)
+                new_char_btn = self.sidebar._make_char_btn(obj.name)
                 new_char_btn.clicked.connect(lambda _, i=index: self.sidebar.set_display(i))
-                new_char_btn.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
                 new_char_btn.customContextMenuRequested.connect(
                     lambda pos, i=index, btn=new_char_btn: self.sidebar.open_context_menu(pos, i, btn)
                 )
                 views.button_list.append(new_char_btn)
                 insert_index = character_layout.count() - 1
-                character_layout.insertWidget(insert_index - 1, new_char_btn)
+                character_layout.insertWidget(insert_index, new_char_btn, alignment=Qt.AlignmentFlag.AlignHCenter)
  
             # Restore active character
             idx = s.get("current_char_index", -1)
@@ -175,6 +173,14 @@ class MainWindow(QMainWindow):
 
             if "campaign_name" in s and s["campaign_name"]:
                 self._update_title(s["campaign_name"])
+
+            if "body_color" in s:
+                color = QColor(s["body_color"])
+                d.set_body_color(color)
+                self.dice.apply_accent(color)
+                self.characterSheet.apply_accent(color)
+                self.multipliers.apply_accent(color)
+                self.sidebar.apply_accent(color) 
  
     
     
