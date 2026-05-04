@@ -1,16 +1,16 @@
 import sys
-
+ 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QSplitter, QVBoxLayout
 from diceClass import *
 import views
 from views import *
 import json, os
-
+ 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
+ 
         # Background
         self.setStyleSheet("""
                             QMainWindow {
@@ -21,17 +21,17 @@ class MainWindow(QMainWindow):
         color: white;
     }
                            """)
-
+ 
         self.setWindowTitle("John DnD")
-
+ 
         # Set the central widget of the Window.
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
-
+ 
         # Dice View
         dice = DiceView()
-
+ 
         def on_settings_opened(settings_view: SettingsView):
             settings_view.dice_body_color_changed.connect(dice.dice.set_body_color)
             settings_view.dice_edge_color_changed.connect(dice.dice.set_edge_color)
@@ -41,36 +41,36 @@ class MainWindow(QMainWindow):
             settings_view.dice_body_color_changed.connect(dice.apply_accent)
             settings_view.dice_body_color_changed.connect(characterSheet.apply_accent)
             settings_view.dice_body_color_changed.connect(multipliers.apply_accent)
-
+ 
         # Character Sheet View
         characterSheet = CharacterSheetView()
-
+ 
         #side bar view pass the character sheet through so it can use its functions
         self.sidebar = SidebarView(characterSheet, on_open_settings=on_settings_opened)
         self.characterSheet = characterSheet
-
+ 
         # Dice Multipliers/stats view (?)
         multipliers = MultiplierView()
         self.multipliers = multipliers
-
+ 
         self.dice = dice
         self._load_settings()
-
+ 
         dice.roll_completed.connect(multipliers.on_roll_completed)
         characterSheet.character_changed.connect(multipliers.update_mods)
-
+ 
          # Right side splits
         right_side = QSplitter(Qt.Orientation.Vertical)
         right_side.addWidget(dice)
         right_side.addWidget(multipliers)
         right_side.setSizes([600, 600])
-
+ 
         main_view = QSplitter(Qt.Orientation.Horizontal)
         main_view.addWidget(self.sidebar)
         main_view.addWidget(characterSheet)
         main_view.addWidget(right_side)
         main_view.setSizes([85, 400, 600])
-
+ 
         layout.addWidget(main_view)
     
     def closeEvent(self, event):
@@ -92,6 +92,7 @@ class MainWindow(QMainWindow):
                     "intel":        c.intel,
                     "wisdom":       c.wisdom,
                     "lore":         c.lore,
+                    "notes":        c.notes,
                 }
                 for c in views.char_list
             ],
@@ -136,6 +137,7 @@ class MainWindow(QMainWindow):
                 obj.intel        = int(char_data["intel"])
                 obj.wisdom       = int(char_data["wisdom"])
                 obj.lore         = char_data.get("lore", "")
+                obj.notes        = char_data.get("notes", "")
                 obj.is_set       = True
                 views.char_list.append(obj)
  
@@ -155,14 +157,14 @@ class MainWindow(QMainWindow):
             idx = s.get("current_char_index", -1)
             if 0 <= idx < len(views.char_list):
                 self.sidebar.set_display(idx)
-
+ 
     
     
-
-
+ 
+ 
 app = QApplication(sys.argv)
-
+ 
 window = MainWindow()
 window.showMaximized()
-
+ 
 app.exec()

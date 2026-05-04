@@ -193,59 +193,128 @@ class CharacterSheetView(QFrame):
         super().__init__(parent)
         global current_char
         self.setFrameStyle(QFrame.Shape.Box | QFrame.Shadow.Sunken)
-        self.setStyleSheet(f"""
-            CharacterSheetView {{
+        self.setStyleSheet("""
+            CharacterSheetView {
                 border: 2px solid #4B1414;
                 border-radius: 4px;
-            }}
+            }
         """)
-        self.layout = QFormLayout(self)
-        
-
+ 
+        self.layout = QVBoxLayout(self)
+        self.layout.setContentsMargins(20, 20, 20, 20)
+        self.layout.setSpacing(4)
+ 
+        # ── Name ──────────────────────────────────────────────────────
         self.name_label = QLabel("No character selected")
+        self.name_label.setFont(QFont("Inter", 22, QFont.Weight.Bold))
+        self.name_label.setStyleSheet("color: #ffffff;")
+        self.name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+ 
+        # ── Class · Race ──────────────────────────────────────────────
+        identity_row = QHBoxLayout()
+        identity_row.setSpacing(6)
+ 
         self.class_label = QLabel("")
+        self.class_label.setFont(QFont("Inter", 11))
+        self.class_label.setStyleSheet("color: #888888;")
+        self.class_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+ 
+        dot = QLabel("·")
+        dot.setStyleSheet("color: #444;")
+        dot.setAlignment(Qt.AlignmentFlag.AlignCenter)
+ 
         self.race_label = QLabel("")
-        self.str_label = QLabel("")
-        self.dex_label = QLabel("")
-        self.con_label = QLabel("")
-        self.int_label = QLabel("")
-        self.wis_label = QLabel("")
-        self.charisma_label = QLabel("")
-
-        
-
-        self.layout.addRow("Name:", self.name_label)
-        self.layout.addRow("Class:", self.class_label)
-        self.layout.addRow("Race:", self.race_label)
-        self.layout.addRow("Strength:", self.str_label)
-        self.layout.addRow("Dexterity:", self.dex_label)
-        self.layout.addRow("Constitution:", self.con_label)
-        self.layout.addRow("Intelligence:", self.int_label)
-        self.layout.addRow("Wisdom:", self.wis_label)
-        self.layout.addRow("Charisma:",self.charisma_label)
-
-        self.lore_label = QLabel("Lore")
-        self.lore_label.setFont(QFont("Inter", 11, QFont.Weight.Bold))
-        self.lore_label.setStyleSheet("color: #aaa; margin-top: 8px;")
-
+        self.race_label.setFont(QFont("Inter", 11))
+        self.race_label.setStyleSheet("color: #888888;")
+        self.race_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+ 
+        identity_row.addStretch()
+        identity_row.addWidget(self.class_label)
+        identity_row.addWidget(dot)
+        identity_row.addWidget(self.race_label)
+        identity_row.addStretch()
+ 
+        self.layout.addWidget(self.name_label)
+        self.layout.addLayout(identity_row)
+        self.layout.addSpacing(16)
+ 
+        # ── Stats grid ────────────────────────────────────────────────
+        grid = QGridLayout()
+        grid.setColumnStretch(0, 3)
+        grid.setColumnStretch(1, 1)
+        grid.setHorizontalSpacing(12)
+        grid.setVerticalSpacing(10)
+ 
+        stat_defs = [
+            ("Strength",     "str_label"),
+            ("Dexterity",    "dex_label"),
+            ("Constitution", "con_label"),
+            ("Intelligence", "int_label"),
+            ("Wisdom",       "wis_label"),
+            ("Charisma",     "charisma_label"),
+        ]
+ 
+        for row, (display, attr) in enumerate(stat_defs):
+            name_lbl = QLabel(display)
+            name_lbl.setFont(QFont("Inter", 11))
+            name_lbl.setStyleSheet("color: #777777;")
+ 
+            val_lbl = QLabel("—")
+            val_lbl.setFont(QFont("Inter", 12, QFont.Weight.Bold))
+            val_lbl.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            val_lbl.setStyleSheet("color: #dddddd;")
+ 
+            setattr(self, attr, val_lbl)
+            grid.addWidget(name_lbl, row, 0)
+            grid.addWidget(val_lbl,  row, 1)
+ 
+        self.layout.addLayout(grid)
+        self.layout.addSpacing(16)
+ 
+        # ── Lore ──────────────────────────────────────────────────────
+        self.lore_label = QLabel("LORE")
+        self.lore_label.setFont(QFont("Inter", 9, QFont.Weight.Bold))
+        self.lore_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
+ 
         self.lore_edit = QTextEdit()
-        self.lore_edit.setPlaceholderText("Write your character's backstory, notes, and lore here...")
-        self.lore_edit.setMinimumHeight(120)
+        self.lore_edit.setPlaceholderText("Character backstory, history, personality...")
         self.lore_edit.setStyleSheet("""
             QTextEdit {
                 background-color: #1a1a1a;
                 color: #e0d8c8;
+                border: 1px solid #2a2a2a;
                 border-radius: 4px;
-                padding: 6px;
+                padding: 8px;
                 font-family: 'Georgia', serif;
                 font-size: 12px;
             }
         """)
         self.lore_edit.textChanged.connect(self._save_lore)
-
-        self.layout.addRow(self.lore_label)
-        self.layout.addRow(self.lore_edit)
-
+ 
+        self.notes_label = QLabel("NOTES")
+        self.notes_label.setFont(QFont("Inter", 9, QFont.Weight.Bold))
+        self.notes_label.setStyleSheet("color: #555555; letter-spacing: 1px;")
+ 
+        self.notes_edit = QTextEdit()
+        self.notes_edit.setPlaceholderText("Session notes, inventory, reminders...")
+        self.notes_edit.setStyleSheet("""
+            QTextEdit {
+                background-color: #1a1a1a;
+                color: #c8d8e0;
+                border: 1px solid #2a2a2a;
+                border-radius: 4px;
+                padding: 8px;
+                font-family: 'Georgia', serif;
+                font-size: 12px;
+            }
+        """)
+        self.notes_edit.textChanged.connect(self._save_notes)
+ 
+        self.layout.addWidget(self.lore_label)
+        self.layout.addWidget(self.lore_edit, stretch=1)
+        self.layout.addWidget(self.notes_label)
+        self.layout.addWidget(self.notes_edit, stretch=1)
+ 
         
     #updates the display to the selected character
     def update_display(self):
@@ -254,15 +323,18 @@ class CharacterSheetView(QFrame):
             self.name_label.setText("No character selected")
             self.class_label.setText("")
             self.race_label.setText("")
-            self.str_label.setText("")
-            self.dex_label.setText("")
-            self.con_label.setText("")
-            self.int_label.setText("")
-            self.wis_label.setText("")
-            self.charisma_label.setText("")
+            self.str_label.setText("—")
+            self.dex_label.setText("—")
+            self.con_label.setText("—")
+            self.int_label.setText("—")
+            self.wis_label.setText("—")
+            self.charisma_label.setText("—")
             self.lore_edit.blockSignals(True)
             self.lore_edit.setPlainText("")
             self.lore_edit.blockSignals(False)
+            self.notes_edit.blockSignals(True)
+            self.notes_edit.setPlainText("")
+            self.notes_edit.blockSignals(False)
             self.character_changed.emit(None)
             return
         self.name_label.setText(current_char.name)
@@ -277,12 +349,20 @@ class CharacterSheetView(QFrame):
         self.lore_edit.blockSignals(True)
         self.lore_edit.setPlainText(current_char.lore or "")
         self.lore_edit.blockSignals(False)
+        self.notes_edit.blockSignals(True)
+        self.notes_edit.setPlainText(current_char.notes or "")
+        self.notes_edit.blockSignals(False)
         self.character_changed.emit(current_char)
-
+ 
     def _save_lore(self):
         global current_char
         if current_char is not None:
             current_char.lore = self.lore_edit.toPlainText()
+ 
+    def _save_notes(self):
+        global current_char
+        if current_char is not None:
+            current_char.notes = self.notes_edit.toPlainText()
     
     def apply_accent(self, color: QColor):
         self.setStyleSheet(f"""
@@ -291,6 +371,7 @@ class CharacterSheetView(QFrame):
                 border-radius: 4px;
             }}
         """)
+
 
         
 #a pop up window to collect the data for the players characters
