@@ -585,7 +585,7 @@ class MultiplierView(QFrame):
                 "con":  character.constitution,
                 "int":  character.intel,
                 "wis":  character.wisdom,
-                "char": 0,  # not on Character yet; stays 0
+                "char": character.charisma, 
             }
             for key, stat_val in stat_map.items():
                 clamped = max(1, min(int(stat_val or 0), 20))
