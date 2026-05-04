@@ -23,6 +23,8 @@ class MainWindow(QMainWindow):
                            """)
  
         self.setWindowTitle("John DnD")
+
+        self._campaign_name = ""
  
         # Set the central widget of the Window.
         central = QWidget()
@@ -41,6 +43,9 @@ class MainWindow(QMainWindow):
             settings_view.dice_body_color_changed.connect(dice.apply_accent)
             settings_view.dice_body_color_changed.connect(characterSheet.apply_accent)
             settings_view.dice_body_color_changed.connect(multipliers.apply_accent)
+            settings_view.campaign_input.setText(self._campaign_name)
+            settings_view.campaign_name_changed.connect(self._update_title)
+
  
         # Character Sheet View
         characterSheet = CharacterSheetView()
@@ -72,6 +77,13 @@ class MainWindow(QMainWindow):
         main_view.setSizes([85, 400, 600])
  
         layout.addWidget(main_view)
+
+    def _update_title(self, name: str):
+        self._campaign_name = name.strip()
+        if name.strip():
+            self.setWindowTitle(f"John DnD — {name.strip()}")
+        else:
+            self.setWindowTitle("John DnD")
     
     def closeEvent(self, event):
         d = self.dice.dice 
@@ -81,6 +93,7 @@ class MainWindow(QMainWindow):
             "edge_color":    d.edge_color.name(),
             "num_color":     d.num_color.name(),
             "show_triangle": d.show_triangle,
+            "campaign_name": self._campaign_name,
             "characters": [
                 {
                     "name":         c.name,
@@ -159,6 +172,9 @@ class MainWindow(QMainWindow):
             idx = s.get("current_char_index", -1)
             if 0 <= idx < len(views.char_list):
                 self.sidebar.set_display(idx)
+
+            if "campaign_name" in s and s["campaign_name"]:
+                self._update_title(s["campaign_name"])
  
     
     

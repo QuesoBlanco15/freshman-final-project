@@ -429,7 +429,7 @@ class SettingsView(QWidget):
     dice_number_color_changed = pyqtSignal(QColor)
     inner_triangle_toggled = pyqtSignal(bool)
     default_die_changed = pyqtSignal(int)
-    animation_speed_changed = pyqtSignal(str)
+    campaign_name_changed = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -501,6 +501,7 @@ class SettingsView(QWidget):
                 padding: 4px 10px; font-size: 12px;
             }
         """)
+        self.campaign_input.textChanged.connect(self.campaign_name_changed)
     
         self.default_die_combo = styled_combo(["d4", "d6", "d8", "d10", "d12", "d20"], "d20")
         self.default_die_combo.currentTextChanged.connect(
