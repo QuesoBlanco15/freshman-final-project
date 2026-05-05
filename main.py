@@ -22,7 +22,7 @@ class MainWindow(QMainWindow):
     }
                            """)
  
-        self.setWindowTitle("John D&D")
+        self.setWindowTitle("John DnD")
         self._campaign_name = ""
  
         # Set the central widget of the Window.
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow):
         if name.strip():
             self.setWindowTitle(f"John DnD — {name.strip()}")
         else:
-            self.setWindowTitle("John D&D")
+            self.setWindowTitle("John DnD")
     
     # A script that runs on closing of the application, saves the state of the window as JSON
     def closeEvent(self, event):

@@ -42,6 +42,7 @@ class DiceWidget(QWidget):
         self.timer.timeout.connect(self._tick)
         self.timer.start(16)
 
+    # Functions to set the color of the dice based on the state of settings.
     def set_body_color(self, value):
         self.body_color = value
         self.update()
@@ -58,6 +59,7 @@ class DiceWidget(QWidget):
         self.show_triangle = value
         self.update()
 
+    # Function that activates when the user presses on the dice.
     def mousePressEvent(self, event):
         if event.button() != Qt.MouseButton.LeftButton:
             return
@@ -73,6 +75,7 @@ class DiceWidget(QWidget):
             self.scale = 1.10 # Effect of picking up the dice
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
         
+    # Function that excecutes specifically when the dice is being dragged.
     def mouseMoveEvent(self, event):
         if not self.dragging:
             return
@@ -85,6 +88,7 @@ class DiceWidget(QWidget):
         self._clamp_dice_pos()
         self.update()
 
+    # Function that excecutes when the dice is released. 
     def mouseReleaseEvent(self, event):
         if not self.dragging:
             return
@@ -103,11 +107,12 @@ class DiceWidget(QWidget):
                 self.velocity.y() * scale * 0.9,
             )
 
-        self.spin_speed = min(speed * 0.9, 28.0)
+        self.spin_speed = min(speed * 0.9, 28.0) # More for faster spin
         self.spin_dir = 1 if self.velocity.x() >= 0 else -1 #Error implement
         self.rolling = True
         self.result = None
 
+    # Executes every tick if the dice is being rolled, if so then it spins and emits a result.
     def _tick(self):
         if self.rolling:
             self.angle += self.spin_dir * self.spin_speed
@@ -126,6 +131,7 @@ class DiceWidget(QWidget):
 
         self.update()
 
+    # Inits the draw die function to draw the dice.
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -134,6 +140,7 @@ class DiceWidget(QWidget):
 
         painter.end()
     
+    # Draws the dice
     def _draw_die(self, painter: QPainter):
         cx, cy = self.dice_pos.x(), self.dice_pos.y()
         r = 72 * self.scale
@@ -142,6 +149,7 @@ class DiceWidget(QWidget):
         painter.translate(cx, cy)
         painter.rotate(self.angle)
 
+        # All dice types
         if self.dice_type == 20:
             sides = 6
         elif self.dice_type == 12:
@@ -154,6 +162,7 @@ class DiceWidget(QWidget):
             sides = 4
         elif self.dice_type == 4:
             sides = 3
+        # collects points based off how many sides.
         points = [
             QPointF(
                 r * math.cos(math.radians(i * 360 / sides - 90)),
@@ -161,8 +170,10 @@ class DiceWidget(QWidget):
             )
             for i in range(sides)
         ]
+        # creates a polygon with these points
         poly = QPolygonF(points)
 
+        # shadow to create a lil bit of depth
         shadow_color = QColor(20, 0, 0, 50)
         painter.setBrush(QBrush(shadow_color))
         painter.setPen(Qt.PenStyle.NoPen)
@@ -170,12 +181,14 @@ class DiceWidget(QWidget):
         painter.drawPolygon(poly)
         painter.translate(-4, -6)
 
+        # draws the body
         body_color = self.body_color 
         painter.setBrush(QBrush(body_color))
         edge_color = self.edge_color
         painter.setPen(QPen(edge_color, 1.8))
         painter.drawPolygon(poly)
 
+        # draws inner decorator triangle
         if self.show_triangle == True:
             if (self.dice_type != 4) or (self.dice_type != 6):
                 tri_r = r * .65
@@ -193,6 +206,7 @@ class DiceWidget(QWidget):
 
         painter.rotate(-self.angle) # keep the result upright
 
+        # draws the result on the dice
         if self.result is not None:
             num_color = self.num_color
             font = QFont("Inter", int(r * 0.4), QFont.Weight.Bold)
@@ -205,6 +219,7 @@ class DiceWidget(QWidget):
             th = fm.height()
             painter.drawText(int(-tw /2), int(th /3), text)
 
+        # draws a ? while rolling
         elif self.rolling:
             if self.spin_speed > 4:
                 font = QFont("Inter", int(r * 0.4), QFont.Weight.Bold)
@@ -213,6 +228,7 @@ class DiceWidget(QWidget):
                 fm = painter.fontMetrics()
                 painter.drawText(int(-fm.horizontalAdvance("?") / 2), int(fm.height() / 3), "?")
 
+        # draws the drag to throw hint
         else:
             font = QFont("Inter", int(r * 0.2))
             painter.setFont(font)
@@ -223,21 +239,25 @@ class DiceWidget(QWidget):
 
         painter.restore()
 
+    # Check if mouse is within a radius of the die
     def _hit_test(self, pos: QPointF) -> bool:
         dx = pos.x() - self.dice_pos.x()
         dy = pos.y() - self.dice_pos.y()
         return math.hypot(dx, dy) <= 72 * self.scale
     
+    # Keeps the die in the bounds of the view.
     def _clamp_dice_pos(self):
         margin = 80
         self.dice_pos.setX(max(margin, min(self.width() - margin, self.dice_pos.x())))
         self.dice_pos.setY(max(margin, min(self.height() - margin, self.dice_pos.y())))
 
+    # sets the dice type
     def set_dice(self, sides: int):
         self.dice_type = sides
         self.result = None
         self.update()
 
+    # View stays consistent even if changed size.
     def resizeEvent(self, event):
         self.dice_pos = QPointF(self.width() / 2, self.height() / 2)
         super().resizeEvent(event)
@@ -275,7 +295,7 @@ class RowWidget(QWidget):
 
         if desc:
             desc_label = QLabel(desc)
-            desc_label.setFont(QFont("Georgia", 9))  # FIX 2: was setFont("Inter", 9)
+            desc_label.setFont(QFont("Georgia", 9))  
             desc_label.setStyleSheet("color: #888;")
             text_col.addWidget(desc_label)
 
@@ -322,7 +342,7 @@ class ToggleSwitch(QCheckBox):
         super().__init__(parent)
         self.setChecked(checked)
         self.stateChanged.connect(lambda _: self._update_style())
-        self._update_style()  # FIX 3: apply style on init
+        self._update_style()  
     
     def _update_style(self):
         if self.isChecked():
@@ -655,7 +675,7 @@ class SettingsView(QWidget):
         name.setFont(QFont("Inter", 14, QFont.Weight.Bold))
         name.setStyleSheet("color: #e8e8e8; border: none;")
 
-        version = QLabel("Version 0.1.0")
+        version = QLabel("Version 1.0.0")
         version.setFont(QFont("Inter", 10))
         version.setStyleSheet("color: #666; border: none;")
 
