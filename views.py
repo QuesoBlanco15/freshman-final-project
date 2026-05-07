@@ -219,6 +219,7 @@ class SidebarView(QWidget):
         dialog.constitution_input.setText(str(char.constitution))
         dialog.intel_input.setText(str(char.intel))
         dialog.wisdom_input.setText(str(char.wisdom))
+        dialog.charisma_input.setText(str(char.charisma))
         
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
@@ -232,8 +233,9 @@ class SidebarView(QWidget):
         char.constitution = int(data["constitution"])
         char.intel = int(data["intel"])
         char.wisdom = int(data["wisdom"])
+        char.charisma = int(data["charisma"])
 
-        button_list[index].setText(char.name[:4])
+        button_list[index].setText(char.name[:2].upper())
 
 
         if current_char == char:

@@ -1,0 +1,50 @@
+{
+  "dice_type": 20,
+  "body_color": "#4b1414",
+  "edge_color": "#d2643c",
+  "num_color": "#ffc8aa",
+  "show_triangle": true,
+  "campaign_name": "",
+  "characters": [
+    {
+      "name": "Demo the Doomest",
+      "clas": "Demoer",
+      "race": "Lines of Code",
+      "strength": 1,
+      "dexterity": 2,
+      "constitution": 20,
+      "intel": 2,
+      "wisdom": 2,
+      "char": 12,
+      "lore": "Back in the day, Demo had a really hard time making friends (being lines of code and all). His lack of friends, mixed with his insane constitution and terrible intelligence, all stirred together and made him evil. From here on out, he only demo's, demolition that is.",
+      "notes": "Took the daggar of demo from the Cave of Demolitol, but now cursed with always being a demo."
+    },
+    {
+      "name": "a",
+      "clas": "a",
+      "race": "a",
+      "strength": 1,
+      "dexterity": 1,
+      "constitution": 1,
+      "intel": 1,
+      "wisdom": 1,
+      "char": 1,
+      "lore": "",
+      "notes": ""
+    },
+    {
+      "name": "b",
+      "clas": "b",
+      "race": "b",
+      "strength": 2,
+      "dexterity": 2,
+      "constitution": 2,
+      "intel": 2,
+      "wisdom": 2,
+      "char": 2,
+      "lore": "",
+      "notes": ""
+    }
+  ],
+  "current_char_index": 2
+}
