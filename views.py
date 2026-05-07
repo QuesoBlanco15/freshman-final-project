@@ -235,7 +235,7 @@ class SidebarView(QWidget):
         char.wisdom = int(data["wisdom"])
         char.charisma = int(data["charisma"])
 
-        button_list[index].setText(char.name[:4])
+        button_list[index].setText(char.name[:2].upper())
 
 
         if current_char == char:

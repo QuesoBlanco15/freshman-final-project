@@ -79,8 +79,8 @@ class Dice():
     #Modifiers are assigned their values based on a 50/50 split system, values below 10 become negative, values above 11 become positive.
     #Its possible to have stats as high as 30, but the values would work all the same and for simplicity sake I ignored it (Its uncommon).
     def mod(self, modifier):
-     lower_half =  [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-     upper_half = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+     lower_half =  [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+     upper_half = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
      if (modifier in lower_half):
         return floor((lower_half.index(modifier) / 2) * (-1))
      if (modifier in upper_half):
